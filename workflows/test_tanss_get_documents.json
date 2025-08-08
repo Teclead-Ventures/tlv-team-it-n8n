@@ -119,13 +119,17 @@
             {
               "name": "id",
               "type": "number"
+            },
+            {
+              "name": "numberOfDocuments",
+              "type": "number"
             }
           ]
         }
       },
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [-432, 32],
+      "position": [-624, 32],
       "id": "24b6eb11-92bd-43c8-af25-ecdb84fe0502",
       "name": "When Executed by Main Workflow"
     },
@@ -221,6 +225,44 @@
       "position": [1744, 32],
       "id": "0e6c9a69-d427-4a37-a629-69dc1e74dbe9",
       "name": "Aggregate all Documents"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3f063c2a-f041-48c1-a30f-549932c22a53",
+              "leftValue": "={{ $json.numberOfDocuments }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-432, 32],
+      "id": "7fc0abf2-09aa-4e8a-9f8c-e0c43ed3315e",
+      "name": "documents exist?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [-224, 176],
+      "id": "2b9521ce-8afb-438c-a2bd-d7912d408662",
+      "name": "No Operation, do nothing"
     }
   ],
   "connections": {
@@ -299,14 +341,9 @@
       "main": [
         [
           {
-            "node": "Get API Key",
+            "node": "documents exist?",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
           }
         ]
       ]
@@ -349,6 +386,29 @@
         [
           {
             "node": "Aggregate all Documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "documents exist?": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Get API Key",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
             "type": "main",
             "index": 0
           }

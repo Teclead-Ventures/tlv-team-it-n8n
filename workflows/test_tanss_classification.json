@@ -13,7 +13,7 @@
       },
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [-736, 112],
+      "position": [-1056, 112],
       "id": "ea4de1e3-34c8-4c48-9309-a5211716198c",
       "name": "Schedule Trigger"
     },
@@ -24,7 +24,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
       "typeVersion": 1,
-      "position": [1168, 288],
+      "position": [1008, 256],
       "id": "a7ab68dc-a33e-4646-a4a1-50cc76b9f900",
       "name": "llama-3.3-70b-instruct1",
       "credentials": {
@@ -38,7 +38,7 @@
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [384, 320],
+      "position": [336, 320],
       "id": "a2a4b24e-3743-4d8a-a3b0-5650beaa268c",
       "name": "No Operation, do nothing"
     },
@@ -49,7 +49,7 @@
       },
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
-      "position": [-64, 112],
+      "position": [-384, 112],
       "id": "363de5c8-ec87-4270-9be7-dd11bf17c93b",
       "name": "Split Out"
     },
@@ -73,7 +73,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-288, 112],
+      "position": [-608, 112],
       "id": "47615ec3-e8ad-44cd-94c2-4aeb76f02b00",
       "name": "Get all last hours Tickets",
       "credentials": {
@@ -96,7 +96,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1536, 240],
+      "position": [1376, 208],
       "id": "4803cc29-979f-42b9-9702-a4eb37ac3913",
       "name": "Add a comment with classification",
       "credentials": {
@@ -108,16 +108,16 @@
     },
     {
       "parameters": {
-        "text": "=**Ticket Data:**\n\n  * **ID:** `{{ $json.id }}`\n  * **Subject:** `{{ $json.title }}`\n  * **Body:** `{{ $json.content }}`\n  * **Due Date:** `{{ $json.dueDate }}`\n  * **Attached Documents:**: {{\n      $if(($json.documents && $json.documents.length > 0),\n          ($json.documents.map(doc => \n            `\\n- Title: ${doc.title}\\n- Summary:${doc.summary_text}`).join('')),\n          \"None\")\n    }} ",
+        "text": "=**Ticket Data:**\n\n  * **ID:** `{{ $json.id }}`\n  * **Subject:** `{{ $json.title }}`\n  * **Body:** `{{ $json.content }}`\n  * **Due Date:** `{{ $json.dueDate }}`\n  * **Attached Documents:**: {{\n      $if(($json.documents && $json.documents.length > 0),\n          ($json.documents.map(doc => \n            `\\n- Title: ${doc.title}\\n- Summary:${doc.summary_text}\\n`).join('')),\n          \"None\")\n    }}\n  * **Attached Images/Screenshots:**: {{\n      $if(($json.images && $json.images.length > 0),\n          ($json.images.map(img => \n            `\\n- Image Name: ${img.fileName}\\n- Summary:${img.imageSummary}\\n`).join('')),\n          \"None\")\n    }}",
         "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\",\n      \"description\": \"The original id of the processed Ticket\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"A few sentence summary of the issue.\"\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"description\": \"The category of the ticket.\",\n      \"enum\": [\n        \"Hardware\",\n        \"Software\",\n        \"Network\",\n        \"Account\",\n        \"Other\"\n      ]\n    },\n    \"department_id\": {\n      \"type\": \"integer\",\n      \"description\": \"The numeric ID of the department best suited to handle the ticket.\",\n      \"enum\": [9, 2, 12, 5, 1, 10, 30, 8, 13, 4, 6, 3]\n    },\n    \"problem_location\": {\n      \"type\": \"string\",\n      \"description\": \"Where the problem is occurring (e.g., office room, device, software name).\"\n    },\n    \"customer_actions\": {\n      \"type\": \"string\",\n      \"description\": \"A summary of what the customer has already tried.\"\n    },\n    \"priority\": {\n      \"type\": \"integer\",\n      \"description\": \"The priority level of the ticket from 1 (low) to 9 (high).\"\n    },\n    \"attachment_summary\": {\n      \"type\": \"string\",\n      \"description\": \"short summary of the content from all attachments and documents provided (if any)\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"summary\",\n    \"category\",\n    \"department_id\",\n    \"problem_location\",\n    \"customer_actions\",\n    \"priority\",\n    \"attachment_summary\"\n  ]\n}",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\",\n      \"description\": \"The original id of the processed Ticket\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"A few sentence summary of the issue.\"\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"description\": \"The category of the ticket.\",\n      \"enum\": [\n        \"Hardware\",\n        \"Software\",\n        \"Network\",\n        \"Account\",\n        \"Other\"\n      ]\n    },\n    \"department_id\": {\n      \"type\": \"integer\",\n      \"description\": \"The numeric ID of the department best suited to handle the ticket.\",\n      \"enum\": [9, 2, 12, 5, 1, 10, 30, 8, 13, 4, 6, 3]\n    },\n    \"problem_location\": {\n      \"type\": \"string\",\n      \"description\": \"Where the problem is occurring (e.g., office room, device, software name).\"\n    },\n    \"customer_actions\": {\n      \"type\": \"string\",\n      \"description\": \"A summary of what the customer has already tried.\"\n    },\n    \"priority\": {\n      \"type\": \"integer\",\n      \"description\": \"The priority level of the ticket from 1 (low) to 9 (high).\"\n    },\n    \"attachment_summary\": {\n      \"type\": \"string\",\n      \"description\": \"short summary of the content from all attachments, images and documents provided (if any)\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"summary\",\n    \"category\",\n    \"department_id\",\n    \"problem_location\",\n    \"customer_actions\",\n    \"priority\",\n    \"attachment_summary\"\n  ]\n}",
         "options": {
           "systemPromptTemplate": "=You are an expert IT support ticket analyst and dispatcher. Your task is to analyze the support ticket provided by the user, classify it, and route it to the correct department.\n\n**Instructions:**\nAnalyze the ticket and attached documents content summary (if existing) and provide the information required by the JSON schema.\n\n**Department Routing:**\nBased on the ticket's content, determine the single most appropriate department to handle the request from the list below. Common keywords are provided to help you decide.\n\n  * **9 - 1st Level Support:** General IT questions, password resets, simple software issues (e.g., \"can't log in,\" \"printer not working,\" \"need software installed\").\n  * **2 - Buchhaltung (Accounting):** Invoices, billing issues, license costs, financial queries.\n  * **12 - Dispatching:** Field technician requests, on-site hardware repair, physical equipment delivery.\n  * **5 - Einkauf (Purchasing):** New hardware/software requests, order status, procurement.\n  * **1 - Geschäftsleitung (Management):** High-level strategic requests, escalations involving upper management.\n  * **10 - Management ext.:** Issues related to external consultants or managed services.\n  * **30 - Marketing:** Website issues, CRM campaigns, social media tools, marketing software.\n  * **8 - Office Cockpit:** Issues related to the internal \"Office Cockpit\" application.\n  * **13 - Projekte (Projects):** Requests related to ongoing, specific projects.\n  * **4 - Technik/Support (Advanced Support):** Complex technical problems, server issues, network outages, escalations from 1st Level.\n  * **6 - Verkauf/Vetrieb (Sales):** CRM issues, sales pipeline questions, customer account setup for sales.\n  * **3 - Verwaltung (Administration):** Human resources requests, office management, administrative tasks.\n\nReturn **ONLY the numeric ID** for the chosen department in the `department_id` field."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.informationExtractor",
       "typeVersion": 1.2,
-      "position": [1168, 112],
+      "position": [1008, 80],
       "id": "c0a613dd-7411-4ecb-bb7d-eff7d0ccc32a",
       "name": "Information Extractor"
     },
@@ -147,7 +147,7 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [160, 112],
+      "position": [-160, 112],
       "id": "777b750e-103f-48ad-a8e1-7d46bcdb53d6",
       "name": "If not already classified"
     },
@@ -173,7 +173,7 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [-512, 112],
+      "position": [-832, 112],
       "id": "db767f2f-9bca-47a1-ad9f-35600952a392",
       "name": "Get API Key"
     },
@@ -190,7 +190,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1536, 48],
+      "position": [1376, 16],
       "id": "170509ed-2cde-428b-be10-5161f0a97ec2",
       "name": "Update Ticket",
       "credentials": {
@@ -199,48 +199,6 @@
           "name": "Header Auth account"
         }
       }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "3f063c2a-f041-48c1-a30f-549932c22a53",
-              "leftValue": "={{ $json.numberOfDocuments }}",
-              "rightValue": 0,
-              "operator": {
-                "type": "number",
-                "operation": "gt"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [384, 96],
-      "id": "4ac556d6-f217-4b6e-a43b-c960c9553234",
-      "name": "documents exist?"
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "combineBy": "combineAll",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [1008, 0],
-      "id": "31992547-8cd1-4296-86d9-2f462c5ed66a",
-      "name": "Merge"
     },
     {
       "parameters": {
@@ -253,7 +211,8 @@
         "workflowInputs": {
           "mappingMode": "defineBelow",
           "value": {
-            "id": "={{ $json.id }}"
+            "id": "={{ $json.id }}",
+            "numberOfDocuments": "={{ $json.numberOfDocuments }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -267,24 +226,26 @@
               "type": "number"
             },
             {
-              "id": "apiKey",
-              "displayName": "apiKey",
+              "id": "numberOfDocuments",
+              "displayName": "numberOfDocuments",
               "required": false,
               "defaultMatch": false,
               "display": true,
               "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": true
+              "type": "number",
+              "removed": false
             }
           ],
           "attemptToConvertTypes": false,
           "convertFieldsToString": true
         },
-        "options": {}
+        "options": {
+          "waitForSubWorkflow": true
+        }
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [816, -80],
+      "position": [336, -144],
       "id": "82a2c7c4-ef22-4211-9f21-947aecde15ee",
       "name": "Execute Document Workflow"
     },
@@ -295,7 +256,7 @@
         "width": 672
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [-784, -48],
+      "position": [-1104, -48],
       "typeVersion": 1,
       "id": "f95f542d-4776-472f-8dfa-7143f36a4c17",
       "name": "Sticky Note"
@@ -308,85 +269,95 @@
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [1488, -176],
+      "position": [1328, -208],
       "typeVersion": 1,
       "id": "fc3cb6ca-30b1-4faa-bead-266de1772752",
       "name": "Sticky Note1"
     },
     {
       "parameters": {
-        "url": "=https://helpdesk.team-it-group.de/backend/api/v1/tickets/{{ $json.id }}/screenshots",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [496, -256],
-      "id": "c113aadf-6f05-4219-8b41-314610b660ae",
-      "name": "Get Images and Screenshots",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "O7ih4vhlXtdpFYEv",
-          "name": "Header Auth account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
+        "workflowId": {
+          "__rl": true,
+          "value": "QVVSuDhw3tvLqUpP",
+          "mode": "list",
+          "cachedResultName": "test_tanss_images"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}"
           },
-          "conditions": [
+          "matchingColumns": ["id"],
+          "schema": [
             {
-              "id": "cfa9af2c-4432-4000-857a-51ac0e766b53",
-              "leftValue": "={{$json.content}}",
-              "rightValue": "",
-              "operator": {
-                "type": "array",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
             }
           ],
-          "combinator": "and"
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
         },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [640, -256],
-      "id": "bb6f9aaf-c304-42b7-9308-c0defd66c7ea",
-      "name": "images exist?"
-    },
-    {
-      "parameters": {
         "options": {
           "waitForSubWorkflow": true
         }
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [816, -256],
+      "position": [336, -304],
       "id": "51cfbd4f-4cfa-4093-aa01-b8b82c7f2a04",
       "name": "Execute Image Workflow"
     },
     {
       "parameters": {
-        "content": "## WIP\nMake clean",
-        "height": 256,
-        "width": 512,
-        "color": 6
+        "content": "## Sub-Workflows for Attachments",
+        "height": 416,
+        "color": 2
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [464, -352],
+      "position": [272, -384],
       "typeVersion": 1,
-      "id": "2c0de554-445c-4cbe-81c3-eaf55a06c76b",
+      "id": "c8038647-0b36-4a21-9151-b67314dc8703",
       "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [640, -224],
+      "id": "99b09b65-ea88-46c0-971e-4d88fae5439e",
+      "name": "Image + Document Summaries"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [816, 80],
+      "id": "31992547-8cd1-4296-86d9-2f462c5ed66a",
+      "name": "Attachments + Ticket Data"
     }
   ],
   "connections": {
@@ -454,9 +425,19 @@
       "main": [
         [
           {
-            "node": "documents exist?",
+            "node": "Execute Image Workflow",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Execute Document Workflow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Attachments + Ticket Data",
+            "type": "main",
+            "index": 1
           }
         ],
         [
@@ -482,67 +463,44 @@
     "Update Ticket": {
       "main": [[]]
     },
-    "documents exist?": {
-      "main": [
-        [
-          {
-            "node": "Execute Document Workflow",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Merge",
-            "type": "main",
-            "index": 1
-          }
-        ],
-        [
-          {
-            "node": "Information Extractor",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Merge": {
-      "main": [
-        [
-          {
-            "node": "Information Extractor",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Execute Document Workflow": {
       "main": [
         [
           {
-            "node": "Merge",
+            "node": "Image + Document Summaries",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Execute Image Workflow": {
+      "main": [
+        [
+          {
+            "node": "Image + Document Summaries",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Get Images and Screenshots": {
+    "Image + Document Summaries": {
       "main": [
         [
           {
-            "node": "images exist?",
+            "node": "Attachments + Ticket Data",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "images exist?": {
+    "Attachments + Ticket Data": {
       "main": [
         [
           {
-            "node": "Execute Image Workflow",
+            "node": "Information Extractor",
             "type": "main",
             "index": 0
           }
