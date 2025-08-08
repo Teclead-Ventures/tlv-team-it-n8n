@@ -1,0 +1,161 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://helpdesk.team-it-group.de/backend/api/v1/login",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpCustomAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-48, 384],
+      "id": "6e297df6-2582-4f04-bfdd-fbfdcd696607",
+      "name": "Login",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "XljCWKlBkXEyORVp",
+          "name": "TANSS API Credentials"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// initialize staticData object\nconst workflowStaticData = $getWorkflowStaticData('global');\n// initialize accessToken on staticData if it desn't exist yet\nif (!workflowStaticData.hasOwnProperty('apiKey')) {\n  workflowStaticData.apiKey = 0\n}\n\n// initializing any other variables on the staticData object\nif (!workflowStaticData.hasOwnProperty('expire')) {\n  workflowStaticData.expire = $now\n}\n\nreturn [\n  {\n      // data: $input.all(),\n      apiKey: workflowStaticData.apiKey,\n      expire: workflowStaticData.expire,\n      // today: $today\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-624, 192],
+      "id": "2afc5829-18c8-4f57-846b-f19f56927401",
+      "name": "Initiate Static Data"
+    },
+    {
+      "parameters": {
+        "jsCode": "const workflowStaticData = $getWorkflowStaticData('global');\n\n// Get the new api key and the expire time (as a Unix timestamp in seconds)\nconst newApiKey = $input.first().json.content.apiKey;\nconst expireUnixTimestamp = $input.first().json.content.expire;\n\n// Store the new key in static data\nworkflowStaticData.apiKey = newApiKey;\n\n// **IMPORTANT**: Convert the Unix timestamp to an ISO String before storing it\nworkflowStaticData.expire = DateTime.fromSeconds(expireUnixTimestamp).toISO();\n\n// Output the new data for the rest of the workflow\nreturn [\n  {\n    apiKey: workflowStaticData.apiKey,\n    expire: workflowStaticData.expire\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [128, 384],
+      "id": "84caaacd-f361-4049-b316-2f092f61c0f2",
+      "name": "Set New apiKey"
+    },
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [-832, 192],
+      "id": "c9dc3790-43d2-4c98-8774-f4a4e6191cf8",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ebba0680-2b06-471b-be18-bbf671d6ec00",
+              "leftValue": "={{ DateTime.fromSeconds($json.expire).toISO() }}",
+              "rightValue": "={{ $now.plus(1,'minute') }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-448, 192],
+      "id": "730318e3-7cbc-4126-a8d7-cdc70c25ebcd",
+      "name": "Is apiKey valid?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [352, 192],
+      "id": "f042f0ce-8949-473a-bce5-f1d268d79b8f",
+      "name": "Send API Key to Workflow"
+    }
+  ],
+  "connections": {
+    "Login": {
+      "main": [
+        [
+          {
+            "node": "Set New apiKey",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initiate Static Data": {
+      "main": [
+        [
+          {
+            "node": "Is apiKey valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set New apiKey": {
+      "main": [
+        [
+          {
+            "node": "Send API Key to Workflow",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Initiate Static Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is apiKey valid?": {
+      "main": [
+        [
+          {
+            "node": "Send API Key to Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Login",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb82cb908cab52e40008ef27de71c2aa4d5b63789fd0294ce950d5a085fdc1d1"
+  }
+}
