@@ -96,7 +96,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1376, 208],
+      "position": [1520, 208],
       "id": "4803cc29-979f-42b9-9702-a4eb37ac3913",
       "name": "Add a comment with classification",
       "credentials": {
@@ -110,9 +110,9 @@
       "parameters": {
         "text": "=**Ticket Data:**\n\n  * **ID:** `{{ $json.id }}`\n  * **Subject:** `{{ $json.title }}`\n  * **Body:** `{{ $json.content }}`\n  * **Due Date:** `{{ $json.dueDate }}`\n  * **Attached Documents:**: {{\n      $if(($json.documents && $json.documents.length > 0),\n          ($json.documents.map(doc => \n            `\\n- Title: ${doc.title}\\n- Summary:${doc.summary_text}\\n`).join('')),\n          \"None\")\n    }}\n  * **Attached Images/Screenshots:**: {{\n      $if(($json.images && $json.images.length > 0),\n          ($json.images.map(img => \n            `\\n- Image Name: ${img.fileName}\\n- Summary:${img.imageSummary}\\n`).join('')),\n          \"None\")\n    }}",
         "schemaType": "manual",
-        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\",\n      \"description\": \"The original id of the processed Ticket\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"A few sentence summary of the issue.\"\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"description\": \"The category of the ticket.\",\n      \"enum\": [\n        \"Hardware\",\n        \"Software\",\n        \"Network\",\n        \"Account\",\n        \"Other\"\n      ]\n    },\n    \"department_id\": {\n      \"type\": \"integer\",\n      \"description\": \"The numeric ID of the department best suited to handle the ticket.\",\n      \"enum\": [9, 2, 12, 5, 1, 10, 30, 8, 13, 4, 6, 3]\n    },\n    \"problem_location\": {\n      \"type\": \"string\",\n      \"description\": \"Where the problem is occurring (e.g., office room, device, software name).\"\n    },\n    \"customer_actions\": {\n      \"type\": \"string\",\n      \"description\": \"A summary of what the customer has already tried.\"\n    },\n    \"priority\": {\n      \"type\": \"integer\",\n      \"description\": \"The priority level of the ticket from 1 (low) to 9 (high).\"\n    },\n    \"attachment_summary\": {\n      \"type\": \"string\",\n      \"description\": \"short summary of the content from all attachments, images and documents provided (if any)\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"summary\",\n    \"category\",\n    \"department_id\",\n    \"problem_location\",\n    \"customer_actions\",\n    \"priority\",\n    \"attachment_summary\"\n  ]\n}",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\",\n      \"description\": \"The original id of the processed Ticket\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"A few sentence summary of the issue.\"\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"description\": \"The category of the ticket.\",\n      \"enum\": [\n        \"Hardware\",\n        \"Software\",\n        \"Network\",\n        \"Account\",\n        \"Other\"\n      ]\n    },\n    \"department_id\": {\n      \"type\": \"integer\",\n      \"description\": \"The numeric ID of the department best suited to handle the ticket.\",\n      \"enum\": [12, 4, 6]\n    },\n    \"problem_location\": {\n      \"type\": \"string\",\n      \"description\": \"Where the problem is occurring (e.g., office room, device, software name).\"\n    },\n    \"customer_actions\": {\n      \"type\": \"string\",\n      \"description\": \"A summary of what the customer has already tried.\"\n    },\n    \"priority\": {\n      \"type\": \"integer\",\n      \"description\": \"The priority level of the ticket from 1 (low) to 9 (high).\"\n    },\n    \"attachment_summary\": {\n      \"type\": \"string\",\n      \"description\": \"short summary of the content from all attachments, images and documents provided (if any)\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"summary\",\n    \"category\",\n    \"department_id\",\n    \"problem_location\",\n    \"customer_actions\",\n    \"priority\",\n    \"attachment_summary\"\n  ]\n}",
         "options": {
-          "systemPromptTemplate": "=You are an expert IT support ticket analyst and dispatcher. Your task is to analyze the support ticket provided by the user, classify it, and route it to the correct department.\n\n**Instructions:**\nAnalyze the ticket and attached documents content summary (if existing) and provide the information required by the JSON schema.\n\n**Department Routing:**\nBased on the ticket's content, determine the single most appropriate department to handle the request from the list below. Common keywords are provided to help you decide.\n\n  * **9 - 1st Level Support:** General IT questions, password resets, simple software issues (e.g., \"can't log in,\" \"printer not working,\" \"need software installed\").\n  * **2 - Buchhaltung (Accounting):** Invoices, billing issues, license costs, financial queries.\n  * **12 - Dispatching:** Field technician requests, on-site hardware repair, physical equipment delivery.\n  * **5 - Einkauf (Purchasing):** New hardware/software requests, order status, procurement.\n  * **1 - Geschäftsleitung (Management):** High-level strategic requests, escalations involving upper management.\n  * **10 - Management ext.:** Issues related to external consultants or managed services.\n  * **30 - Marketing:** Website issues, CRM campaigns, social media tools, marketing software.\n  * **8 - Office Cockpit:** Issues related to the internal \"Office Cockpit\" application.\n  * **13 - Projekte (Projects):** Requests related to ongoing, specific projects.\n  * **4 - Technik/Support (Advanced Support):** Complex technical problems, server issues, network outages, escalations from 1st Level.\n  * **6 - Verkauf/Vetrieb (Sales):** CRM issues, sales pipeline questions, customer account setup for sales.\n  * **3 - Verwaltung (Administration):** Human resources requests, office management, administrative tasks.\n\nReturn **ONLY the numeric ID** for the chosen department in the `department_id` field."
+          "systemPromptTemplate": "=You are an expert IT support ticket analyst and dispatcher. Your task is to analyze the support ticket provided by the user, classify it, and route it to the correct department.\n\n**Instructions:**\nAnalyze the ticket and attached documents content summary (if existing) and provide the information required by the JSON schema.\n\n**Department Routing:**\nBased on the ticket's content, determine the single most appropriate department to handle the request from the list below. Common keywords are provided to help you decide.\n  * **12 - Dispatching:** Field technician requests, on-site hardware repair, physical equipment delivery.\n  * **4 - Technik/Support (Advanced Support):** Complex technical problems, server issues, network outages, escalations from 1st Level.\n  * **6 - Verkauf/Vetrieb (Sales):** CRM issues, sales pipeline questions, customer account setup for sales.\n\nReturn **ONLY the numeric ID** for the chosen department in the `department_id` field."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.informationExtractor",
@@ -190,7 +190,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1376, 16],
+      "position": [1520, 16],
       "id": "170509ed-2cde-428b-be10-5161f0a97ec2",
       "name": "Update Ticket",
       "credentials": {
@@ -199,6 +199,18 @@
           "name": "Header Auth account"
         }
       }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [816, 80],
+      "id": "31992547-8cd1-4296-86d9-2f462c5ed66a",
+      "name": "Merge"
     },
     {
       "parameters": {
@@ -269,7 +281,7 @@
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [1328, -208],
+      "position": [1472, -208],
       "typeVersion": 1,
       "id": "fc3cb6ca-30b1-4faa-bead-266de1772752",
       "name": "Sticky Note1"
@@ -325,7 +337,7 @@
     },
     {
       "parameters": {
-        "content": "## Sub-Workflows for Attachments",
+        "content": "## Sub-Workflows",
         "height": 416,
         "color": 2
       },
@@ -345,19 +357,7 @@
       "typeVersion": 3.2,
       "position": [640, -224],
       "id": "99b09b65-ea88-46c0-971e-4d88fae5439e",
-      "name": "Image + Document Summaries"
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "combineBy": "combineAll",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [816, 80],
-      "id": "31992547-8cd1-4296-86d9-2f462c5ed66a",
-      "name": "Attachments + Ticket Data"
+      "name": "Merge1"
     }
   ],
   "connections": {
@@ -412,11 +412,6 @@
             "node": "Add a comment with classification",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Update Ticket",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -435,7 +430,7 @@
             "index": 0
           },
           {
-            "node": "Attachments + Ticket Data",
+            "node": "Merge",
             "type": "main",
             "index": 1
           }
@@ -463,11 +458,22 @@
     "Update Ticket": {
       "main": [[]]
     },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Execute Document Workflow": {
       "main": [
         [
           {
-            "node": "Image + Document Summaries",
+            "node": "Merge1",
             "type": "main",
             "index": 1
           }
@@ -478,29 +484,18 @@
       "main": [
         [
           {
-            "node": "Image + Document Summaries",
+            "node": "Merge1",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Image + Document Summaries": {
+    "Merge1": {
       "main": [
         [
           {
-            "node": "Attachments + Ticket Data",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Attachments + Ticket Data": {
-      "main": [
-        [
-          {
-            "node": "Information Extractor",
+            "node": "Merge",
             "type": "main",
             "index": 0
           }
