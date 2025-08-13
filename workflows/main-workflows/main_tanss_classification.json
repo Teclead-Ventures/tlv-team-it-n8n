@@ -24,7 +24,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
       "typeVersion": 1,
-      "position": [1136, 256],
+      "position": [1296, 304],
       "id": "a7ab68dc-a33e-4646-a4a1-50cc76b9f900",
       "name": "llama-3.3-70b-instruct1",
       "credentials": {
@@ -96,7 +96,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1648, 208],
+      "position": [1520, -64],
       "id": "4803cc29-979f-42b9-9702-a4eb37ac3913",
       "name": "Add a comment with classification",
       "credentials": {
@@ -175,7 +175,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1648, 16],
+      "position": [1792, -64],
       "id": "170509ed-2cde-428b-be10-5161f0a97ec2",
       "name": "Update Ticket",
       "credentials": {
@@ -248,24 +248,11 @@
     },
     {
       "parameters": {
-        "content": "## Todo's\n* Where to put classification?\n* What should be updated?\n* What is important information to show in the tickets?",
-        "height": 576,
-        "width": 192,
-        "color": 3
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [1600, -208],
-      "typeVersion": 1,
-      "id": "fc3cb6ca-30b1-4faa-bead-266de1772752",
-      "name": "Sticky Note1"
-    },
-    {
-      "parameters": {
         "workflowId": {
           "__rl": true,
           "value": "QVVSuDhw3tvLqUpP",
           "mode": "list",
-          "cachedResultName": "test_tanss_images"
+          "cachedResultName": "sub_tanss_images"
         },
         "workflowInputs": {
           "mappingMode": "defineBelow",
@@ -407,6 +394,59 @@
       "position": [944, 80],
       "id": "31992547-8cd1-4296-86d9-2f462c5ed66a",
       "name": "Merge with Ticketdata"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ticket Data:\n- Ticket Title: {{ $('Merge with Ticketdata').item.json.title }}\n- Ticket Content: {{ $('Merge with Ticketdata').item.json.content }}\n- Ticket Summary:  {{ $json.output.summary }}\n- Attachment Analysis: {{ $json.output.attachment_analysis }}\n- Clarification Questions: {{ $json.output.clarification_questions }}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a helpful IT Support employee from **Team IT**. Your goal is to write a professional and clear email to a user based on a ticket summary and a pre-defined list of questions. The purpose of the email is to gather the necessary information to resolve their IT issue.  \n**# Core Instructions**  \n1.  **Language:** You **MUST** write the entire email in the same language as the provided `Ticket Summary`. \n2.  **Structure:**     \n* Start with a polite greeting using the `User Name`.     \n* Briefly acknowledge the user's problem based on the `Ticket Summary`.     \n* State that you need a bit more information to help.     \n* Present the `Questions to Ask` clearly, preferably in a numbered list.     \n* End with a professional closing from \"Team IT\".  \n**# Input Format**  * `## Customer Name:` The Customers name. * `## Ticket Summary:` A short description of the user's problem. * * `## Attachment Summary:` A short description of the attachments provided. * `## Questions to Ask:` A list of questions you need to include in the email, but can be rewritten.  \n---  ### **Example**  **[START OF INPUT]**  `## User Name:` Klaus `## Ticket Summary:` Benutzer kann sich nicht mit dem VPN verbinden, bekommt immer eine Fehlermeldung. `## Questions to Ask:` 1. Welche Fehlermeldung wird genau angezeigt? (Bitte Screenshot beifügen) 2. Von welchem Standort aus versuchen Sie sich zu verbinden (Büro oder Homeoffice)? 3. Haben Sie versucht, den Computer neu zu starten?  **[END OF INPUT]**  **[EXPECTED OUTPUT DRAFT]**  Hallo Klaus, vielen Dank für Ihre Nachricht. Ich habe gesehen, dass Sie Probleme mit der VPN-Verbindung haben.  Um das Problem schnell für Sie zu lösen, benötige ich noch ein paar zusätzliche Informationen. Könnten Sie mir bitte die folgenden Fragen beantworten?  1.  Welche Fehlermeldung wird genau angezeigt? (Bitte fügen Sie, wenn möglich, einen Screenshot bei) 2.  Von welchem Standort aus versuchen Sie sich zu verbinden (Büro oder Homeoffice)? 3.  Haben Sie bereits versucht, den Computer neu zu starten?  Sobald ich Ihre Antworten habe, kann ich die nächsten Schritte einleiten.  Viele Grüße,  Team IT"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [1520, 128],
+      "id": "a45b6922-adfa-4518-911c-da1ac30c60dd",
+      "name": "Draft Ticket Response"
+    },
+    {
+      "parameters": {
+        "resource": "channelMessage",
+        "teamId": {
+          "__rl": true,
+          "value": "19231660-890a-4d8c-aa37-eec9155a7382",
+          "mode": "list",
+          "cachedResultName": "tlv-n8n-team"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "19:QkBEBfBTzgie0IpxWzP6TlQu71o5V7xNOshVTwxLjss1@thread.tacv2",
+          "mode": "list",
+          "cachedResultName": "ai-confirmations",
+          "cachedResultUrl": "https://teams.cloud.microsoft/l/channel/19%3AQkBEBfBTzgie0IpxWzP6TlQu71o5V7xNOshVTwxLjss1%40thread.tacv2/tlv-n8n-team?groupId=19231660-890a-4d8c-aa37-eec9155a7382&tenantId=f50f53d7-0e4f-4626-a1a9-9fe190a9fe64&allowXTenantAccess=True&ngc=True"
+        },
+        "contentType": "html",
+        "message": "=<div style=\"margin:0;padding:0;font-family:'Segoe UI', Arial, sans-serif;\">\n\t<div style=\"max-width:760px;margin:0 auto;\">\n\t\t<p style=\"margin:0 0 8px 0;font-weight:600;\">TANSS ticket reply ready for approval</p>\n\n\t\t<h2 style=\"margin:0 0 12px 0;line-height:1.3;\">\n\t\t\t{{ $('Merge with Ticketdata').item.json.title }}\n\t\t</h2>\n\n\t\t<ul style=\"margin:0 0 12px 0;padding-left:16px;\">\n\t\t\t<li><strong>Ticket ID</strong>: {{ $('Merge with Ticketdata').item.json.id }}</li>\n\t\t\t<li><strong>Reporter</strong>: {{ $('Merge with Ticketdata').item.json.inboundMails[0].senderName }}</li>\n\t\t\t<li><strong>Documents</strong>: {{ $('Merge with Ticketdata').item.json.numberOfDocuments }} Document(s)</li>\n\t\t\t<li><strong>Department</strong>: {{ $('Ticket Information Extractor').item.json.output.department_id }}</li>\n\t\t\t<li><strong>Priority</strong>: {{ $('Ticket Information Extractor').item.json.output.priority }}</li>\n\t\t</ul>\n\n\t\t<hr style=\"margin:8px 0 12px 0;\">\n\n\t\t<p style=\"margin:12px 0 6px 0;font-weight:600;\">AI summary</p>\n\t\t<blockquote style=\"margin:0 0 12px 0;\">\n\t\t\t{{ $('Ticket Information Extractor').item.json.output.summary }}\n\t\t</blockquote>\n\n\t\t<p style=\"margin:12px 0 6px 0;font-weight:600;\">Full draft (to be posted to TANSS as a public reply)</p>\n\t\t<pre style=\"margin:0 0 12px 0;white-space:pre-wrap;max-height:380px;overflow:auto;\">\n{{$json.text}}\n\t\t</pre>\n\n\t\t<p style=\"margin-top:12px;\">\n\t\t\t<a href=\"https://your-n8n.example/webhook/tanss-approve?ticketId={{ $('Merge with Ticketdata').item.json.id }}\">Approve and send via TANSS</a> ·\n\t\t\t<a href=\"https://your-n8n.example/webhook/tanss-reject?ticketId={{ $('Merge with Ticketdata').item.json.id }}\">Reject</a> ·\n\t\t\t<a href=\"https://your-n8n.example/webhook/tanss-request-changes?ticketId={{ $('Merge with Ticketdata').item.json.id }}\">Request changes</a>\n\t\t</p>\n\n\t\t<p style=\"margin-top:4px;font-size:12px;\">This action will trigger the TANSS API to post the reply on the ticket.</p>\n\t</div>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftTeams",
+      "typeVersion": 2,
+      "position": [1888, 128],
+      "id": "4f4c68ba-08e6-4d99-b9b2-c2c6ab4a873e",
+      "name": "create message and wait for reply",
+      "webhookId": "3497f4e3-71e7-4385-b9de-3fe7dea137b4",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "JfBX4Cn1M8SQBnFV",
+          "name": "Microsoft Teams account"
+        }
+      }
     }
   ],
   "connections": {
@@ -426,6 +466,11 @@
         [
           {
             "node": "Ticket Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Draft Ticket Response",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -530,6 +575,11 @@
             "node": "Add a comment with classification",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Draft Ticket Response",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -572,6 +622,17 @@
         [
           {
             "node": "Ticket Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Ticket Response": {
+      "main": [
+        [
+          {
+            "node": "create message and wait for reply",
             "type": "main",
             "index": 0
           }
