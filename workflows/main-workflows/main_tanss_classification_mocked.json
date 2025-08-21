@@ -1,0 +1,1381 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds",
+              "secondsInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1056, 112],
+      "id": "182c07d0-05a9-4a7b-bbd1-a60dd6b110f9",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [352, 320],
+      "id": "3e5197ce-55de-4e17-8d9d-b73d4b34580d",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=content",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [-368, 112],
+      "id": "c49bac0b-b00d-4589-9ea6-139b96b05a80",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://helpdesk.team-it-group.de/backend/api/v1/tickets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"modifiedWithinTimeframe\": {\n    \"from\": {{ Math.floor($now.minus({ minutes: 200 }).toMillis() / 1000) }},\n    \"to\": {{ Math.floor($now.toMillis() / 1000) }}\n  },\n  \"includeDoneTickets\": false,\n  \"companies\": [7]\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-608, 112],
+      "id": "6953e42a-6f20-4b61-a8ae-632510927a16",
+      "name": "Get all last hours Tickets",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://helpdesk.team-it-group.de/backend/api/v1/tickets/{{ $json.output.id }}/comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"title\": \"Automatic AI Classification\",\n  \"content\": \"Summary: {{ $json.output.summary }}\\nCategory: {{ $json.output.category }}\\nProblem Location: {{ $json.output.problem_location }}\\nCustomer Actions: {{ $json.output.customer_actions }}\\nAttachment Summary: {{ $json.output.attachment_summary }}\\nAttachment Analysis: {{ $json.output.attachment_analysis }}\",\n  \"internal\": true\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1488, -112],
+      "id": "266f5322-32e1-44c2-ad22-11cf405ecb4b",
+      "name": "Add a comment with classification",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6bff2072-7252-4c74-a8c3-c4a493b2fd80",
+              "leftValue": "={{ $json.internalContent }}",
+              "rightValue": "X-AUTO-CLASSIFIED",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-160, 112],
+      "id": "d5b0d37c-6b5c-4b64-8134-56e6be0a0299",
+      "name": "If not already classified"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "uC4tCQ1uf8V5hQTZ",
+          "mode": "list",
+          "cachedResultName": "sub_tanss_login"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [-832, 112],
+      "id": "5d0b29d4-aef7-453a-8fdc-0335ca87769a",
+      "name": "Get API Key"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://helpdesk.team-it-group.de/backend/api/v1/tickets/{{ $json.output.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"internalContent\": \"X-AUTO-CLASSIFIED\",\n  \"priority\": {{ $json.output.priority }},\n  \"assignedToDepartmentId\": {{ $json.output.department_id }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2976, -112],
+      "id": "9cc66817-747f-4a6d-9f47-c3446053a6a9",
+      "name": "Update Ticket",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "JX9l3asxIfeXCOyb",
+          "mode": "list",
+          "cachedResultName": "sub_tanss_get_documents"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "numberOfDocuments": "={{ $json.numberOfDocuments }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "numberOfDocuments",
+              "displayName": "numberOfDocuments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [352, -320],
+      "id": "5e2d2137-dd44-4f73-8e9a-77a17caf9226",
+      "name": "Execute Document Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Todo's\n* When to trigger the flow?\n* Which Tickets should be fetched (company, employee, board)?\n* Only new tickets?",
+        "height": 432,
+        "width": 672
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [-1104, -64],
+      "typeVersion": 1,
+      "id": "fe7718cb-c372-4a8b-b0c0-4588e1239e08",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "QVVSuDhw3tvLqUpP",
+          "mode": "list",
+          "cachedResultName": "sub_tanss_images"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}"
+          },
+          "matchingColumns": ["id"],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "context",
+              "displayName": "context",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [352, -480],
+      "id": "920752da-65d8-4643-b9f3-9d686281f97e",
+      "name": "Execute Image Workflow"
+    },
+    {
+      "parameters": {
+        "content": "## Sub-Workflows",
+        "height": 576,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [272, -544],
+      "typeVersion": 1,
+      "id": "288242d3-82ee-4915-a638-fd2634a2e358",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "text": "=**Ticket Data:**\n\n  * **ID:** `{{ $json.id }}`\n  * **Subject:** `{{ $json.title }}`\n  * **Body:** `{{ $json.content }}`\n  * **Due Date:** `{{ $json.dueDate }}`\n  * **Inbound Mails:** `{{\n      $if(($json.inboundMails && $json.inboundMails.length > 0),\n          ($json.inboundMails.map(mail => \n            `\\n- Sender Name: ${mail.senderName}\\n- Subject:${mail.subject}\\n- Body:${mail.bodyPlain}\\n`).join('')),\n          \"None\")\n    }}`\n  * **Attached Documents:**: {{\n      $if(($json.documents && $json.documents.length > 0),\n          ($json.documents.map(doc => \n            `\\n- Title: ${doc.title}\\n- Summary:${doc.summary_text}\\n`).join('')),\n          \"None\")\n    }}\n  * **Attached Images/Screenshots:**: {{\n      $if(($json.images && $json.images.length > 0),\n          ($json.images.map(img => \n            `\\n- Image Name: ${img.fileName}\\n- Summary:${img.imageSummary}\\n`).join('')),\n          \"None\")\n    }}\n\nImportant: The entire output must be a single-line, minified, and perfectly valid JSON object. Do not use markdown code blocks or any unescaped control characters like newlines within the JSON values",
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\",\n      \"description\": \"The original id of the processed Ticket\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"A few sentence summary of the issue.\"\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"description\": \"The category of the ticket.\",\n      \"enum\": [\n        \"Hardware\",\n        \"Software\",\n        \"Network\",\n        \"Account\",\n        \"Other\"\n      ]\n    },\n    \"department_id\": {\n      \"type\": \"integer\",\n      \"description\": \"The numeric ID of the department best suited to handle the ticket.\",\n      \"enum\": [12, 4, 6]\n    },\n    \"problem_location\": {\n      \"type\": \"string\",\n      \"description\": \"Where the problem is occurring (e.g., office room, device, software name).\"\n    },\n    \"customer_actions\": {\n      \"type\": \"string\",\n      \"description\": \"A summary of what the customer has already tried.\"\n    },\n    \"priority\": {\n      \"type\": \"integer\",\n      \"description\": \"The priority level of the ticket from 1 (low) to 9 (high).\"\n    },\n    \"attachment_summary\": {\n      \"type\": \"string\",\n      \"description\": \"short summary of the content from all attachments, images and documents provided (if any)\"\n    },\n    \"attachment_analysis\": {\n      \"type\": \"string\",\n      \"description\": \"A detailed analysis on how the attachments content relates to the ticket itself and what additional information on the problem can be extracted from it\"\n    },  \n    \"clarification_questions\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"A list of detailed and fitting questions to the customer to clarify open questions.\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"summary\",\n    \"category\",\n    \"department_id\",\n    \"problem_location\",\n    \"customer_actions\",\n    \"priority\",\n    \"attachment_summary\",\n    \"clarification_questions\"\n  ]\n}",
+        "options": {
+          "systemPromptTemplate": "=You are an expert IT support ticket analyst and dispatcher. Your task is to analyze the support ticket provided by the user, classify it, route it to the correct department, and formulate precise questions to gather any missing information.\n\n-----\n\n### **Instructions**\n\n1.  **Analyze the Ticket:** Carefully review the ticket content and any attached document summaries. If the ticket content is empty, the content can be found in inbound Mails. Treat inbound mails as ticket content \n2.  **Formulate Clarification Questions:** Based on your analysis, identify what information is missing to fully resolve the issue. Create a list of detailed and specific questions for the customer. The goal of these questions is to gather all necessary information so the support team can act immediately upon receiving the customer's answers.\n3.  **Route to Department:** Determine the single most appropriate department to handle the ticket based on the rules below.\n4.  **Provide JSON Output:** Structure your entire response as a single JSON object, containing the department ID and the list of clarification questions. **Do not** add any text outside of the JSON object.\n\n-----\n\n### **Department Routing**\n\nBased on the ticket's content, determine the single most appropriate department to handle the request from the list below. Common keywords are provided to help you decide.\n\n  * **12 - Dispatching:** Field technician requests, on-site hardware repair, physical equipment delivery.\n  * **4 - Technik/Support (Advanced Support):** (Complex) technical problems, server issues, network outages, escalations from 1st Level.\n  * **6 - Verkauf/Vetrieb (Sales):** CRM issues, sales pipeline questions, customer account setup for sales.\n\nReturn **ONLY the numeric ID** for the chosen department in the `department_id` field.\n\nPlease respond in the language used by the customer, which is mostly german."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.informationExtractor",
+      "typeVersion": 1.2,
+      "position": [1136, 80],
+      "id": "8b4c3279-e2d3-4273-9a82-f6ccb7661976",
+      "name": "Ticket Information Extractor",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "FCTqIrPU9YlQoUTV",
+          "mode": "list",
+          "cachedResultName": "sub_tanss_mails"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ticketId": "={{ $json.id }}"
+          },
+          "matchingColumns": ["ticketId"],
+          "schema": [
+            {
+              "id": "ticketId",
+              "displayName": "ticketId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [352, -128],
+      "id": "30308633-bf4a-40e1-a861-e2530fc28f42",
+      "name": "Execute Mail Workflow"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [752, -144],
+      "id": "3e143d7f-f21d-4838-8414-bc1572b2b54f",
+      "name": "Merge Mail and Attachments"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [576, -400],
+      "id": "b979a8f6-b831-4ce5-a50a-62835de31070",
+      "name": "Merge Attachments"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [944, 80],
+      "id": "ecae7dfc-fc30-4db4-8d43-fcaa1f014fc6",
+      "name": "Merge with Ticketdata"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ticket Data:\n- Ticket Title: {{ $('Merge with Ticketdata').item.json.title }}\n- Ticket Content: {{ $('Merge with Ticketdata').item.json.content }}\n- Ticket Summary:  {{ $json.output.summary }}\n- Attachment Analysis: {{ $json.output.attachment_analysis }}\n- Clarification Questions: {{ $json.output.clarification_questions }}\n",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "You are a helpful IT Support employee from **Team IT**. Your goal is to write a professional and clear email to a (non-technical) user based on a ticket summary and a pre-defined list of questions. The purpose of the email is to gather the necessary information to resolve their IT issue.  \n**# Core Instructions**  \n1.  **Language:** You **MUST** write the entire email in the same language as the provided `Ticket Summary`. \n2.  **Structure:**     \n* Start with a polite greeting using the `User Name`.     \n* Briefly acknowledge the user's problem based on the `Ticket Summary`.     \n* State that you need a bit more information to help.\n* Be aware, that the user might not be able to understand technical details directly. It needs to be formulated in a way everyone understands\n* Keep the mail as short as possible, but as long as needed.\n* Don't include the subject, just the content of the mail.     \n* Present the `Questions to Ask` clearly, preferably in a numbered list.     \n* End with a professional closing from \"Team IT\".  \n**# Input Format**  * `## Customer Name:` The Customers name. * `## Ticket Summary:` A short description of the user's problem. * * `## Attachment Summary:` A short description of the attachments provided. * `## Questions to Ask:` A list of questions you need to include in the email, but can be rewritten.  \n---  ### **Example**  **[START OF INPUT]**  `## User Name:` Klaus `## Ticket Summary:` Benutzer kann sich nicht mit dem VPN verbinden, bekommt immer eine Fehlermeldung. `## Questions to Ask:` 1. Welche Fehlermeldung wird genau angezeigt? (Bitte Screenshot beifügen) 2. Von welchem Standort aus versuchen Sie sich zu verbinden (Büro oder Homeoffice)? 3. Haben Sie versucht, den Computer neu zu starten?  **[END OF INPUT]**  **[EXPECTED OUTPUT DRAFT]**  Hallo Klaus, vielen Dank für Ihre Nachricht. Ich habe gesehen, dass Sie Probleme mit der VPN-Verbindung haben.  Um das Problem schnell für Sie zu lösen, benötige ich noch ein paar zusätzliche Informationen. Könnten Sie mir bitte die folgenden Fragen beantworten?  1.  Welche Fehlermeldung wird genau angezeigt? (Bitte fügen Sie, wenn möglich, einen Screenshot bei) 2.  Von welchem Standort aus versuchen Sie sich zu verbinden (Büro oder Homeoffice)? 3.  Haben Sie bereits versucht, den Computer neu zu starten?  Sobald ich Ihre Antworten habe, kann ich die nächsten Schritte einleiten.  Viele Grüße,  Team IT"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [1808, 128],
+      "id": "ced14459-fd0e-4370-abbf-c9c86c997cc0",
+      "name": "Draft Ticket Response"
+    },
+    {
+      "parameters": {
+        "resource": "channelMessage",
+        "teamId": {
+          "__rl": true,
+          "value": "19231660-890a-4d8c-aa37-eec9155a7382",
+          "mode": "list",
+          "cachedResultName": "tlv-n8n-team"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "19:QkBEBfBTzgie0IpxWzP6TlQu71o5V7xNOshVTwxLjss1@thread.tacv2",
+          "mode": "list",
+          "cachedResultName": "ai-confirmations",
+          "cachedResultUrl": "https://teams.cloud.microsoft/l/channel/19%3AQkBEBfBTzgie0IpxWzP6TlQu71o5V7xNOshVTwxLjss1%40thread.tacv2/tlv-n8n-team?groupId=19231660-890a-4d8c-aa37-eec9155a7382&tenantId=f50f53d7-0e4f-4626-a1a9-9fe190a9fe64&allowXTenantAccess=True&ngc=True"
+        },
+        "contentType": "html",
+        "message": "=<div style=\"margin:0;padding:0;font-family:'Segoe UI', Arial, sans-serif;\">\n\t<div style=\"max-width:760px;margin:0 auto;\">\n\t\t<p style=\"margin:0 0 8px 0;font-weight:600;\">TANSS ticket reply ready for approval</p>\n\n\t\t<h2 style=\"margin:0 0 12px 0;line-height:1.3;\">\n\t\t\t{{ $('Merge with Ticketdata').item.json.title }}\n\t\t</h2>\n\n\t\t<ul style=\"margin:0 0 12px 0;padding-left:16px;\">\n\t\t\t<li><strong>Ticket ID</strong>: {{ $('Merge with Ticketdata').item.json.id }}</li>\n\t\t\t<li><strong>Reporter</strong>: {{ $('Merge with Ticketdata').item.json.inboundMails[0].senderName }}</li>\n\t\t\t<li><strong>Documents</strong>: {{ $('Merge with Ticketdata').item.json.numberOfDocuments }} Document(s)</li>\n\t\t\t<li><strong>Department</strong>: {{ $('Ticket Information Extractor').item.json.output.department_id }}</li>\n\t\t\t<li><strong>Priority</strong>: {{ $('Ticket Information Extractor').item.json.output.priority }}</li>\n\t\t</ul>\n\n\t\t<hr style=\"margin:8px 0 12px 0;\">\n\n\t\t<p style=\"margin:12px 0 6px 0;font-weight:600;\">AI summary</p>\n\t\t<blockquote style=\"margin:0 0 12px 0;\">\n\t\t\t{{ $('Ticket Information Extractor').item.json.output.summary }}\n\t\t</blockquote>\n\n\t\t<p style=\"margin:12px 0 6px 0;font-weight:600;\">Full draft (to be posted to TANSS as a public reply)</p>\n\t\t<pre style=\"margin:0 0 12px 0;white-space:pre-wrap;max-height:380px;overflow:auto;\">\n{{$json.text}}\n\t\t</pre>\n\n\t\t<p style=\"margin-top:12px;\">\n\t\t\t<a href=\"{{$execution.resumeUrl}}?ticketId={{ $('Merge with Ticketdata').item.json.id }}&send=true\">Approve and send via TANSS</a> ·\n\t\t\t<a href=\"{{$execution.resumeUrl}}?ticketId={{ $('Merge with Ticketdata').item.json.id }}&send=false\">Reject</a> ·\n\t\t\t<a href=\"https://your-n8n.example/webhook/tanss-request-changes?ticketId={{ $('Merge with Ticketdata').item.json.id }}\">Request changes</a>\n\t\t</p>\n\n\t\t<p style=\"margin-top:4px;font-size:12px;\">This action will trigger the TANSS API to post the reply on the ticket.</p>\n\t</div>\n</div>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.microsoftTeams",
+      "typeVersion": 2,
+      "position": [2384, 128],
+      "id": "145dedca-7881-4035-a423-54f250934552",
+      "name": "create message and wait for reply",
+      "webhookId": "56c699bb-03b2-481a-8bc9-446e017c34e8",
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "JfBX4Cn1M8SQBnFV",
+          "name": "Microsoft Teams account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [2592, 128],
+      "id": "b0ea729f-7b3e-4ac8-b1a3-3e4bf8b98ee7",
+      "name": "Wait",
+      "webhookId": "e562d054-1f81-498b-97c8-c62629dd0d45"
+    },
+    {
+      "parameters": {
+        "model": "mistral-medium-latest",
+        "options": {
+          "maxRetries": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [1424, 480],
+      "id": "1871278b-2ffc-43de-b068-bf9d64c689c4",
+      "name": "mistral-medium-latest",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "OKqIIU4OvY7yKbuT",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4755eb03-3c91-4e0d-be89-642d478a5e74",
+              "leftValue": "={{ $json.query.send }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2784, 128],
+      "id": "abf64353-3ded-4764-b794-12051036b097",
+      "name": "send?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2992, 32],
+      "id": "b9ceb6e7-4962-4d9e-963d-2848ec2e99c1",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2992, 224],
+      "id": "bb86d3bb-26bb-4132-a820-5e765bc54b33",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Get the raw string from the previous node's error path\nconst rawString = $json.error;\n\n// Use a regular expression to reliably find the JSON content, even with surrounding text\nconst jsonMatch = rawString.match(/\\{[\\s\\S]*\\}/);\n\n// If no JSON object is found, throw an error\nif (!jsonMatch) {\n  throw new Error(\"Could not find a valid JSON object in the input string.\");\n}\n\nlet jsonString = jsonMatch[0];\n\n// **THIS IS THE KEY FIX**\n// Before parsing, replace unescaped control characters with their valid escaped versions.\n// 1. Replace backslashes: \\ -> \\\\\n// 2. Replace newlines: \\n -> \\\\n\n// 3. Replace carriage returns: \\r -> \\\\r\njsonString = jsonString.replace(/\\\\/g, \"\\\\\\\\\")\n                       .replace(/\\n/g, \"\\\\n\")\n                       .replace(/\\r/g, \"\\\\r\");\n\n// Parse the now-clean and valid JSON string\n// This object will be the output of this node.\nreturn JSON.parse(jsonString);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1488, 192],
+      "id": "037ac67d-9036-4ace-ab39-00dc7da253da",
+      "name": "fix model output"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get API Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "If not already classified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get all last hours Tickets": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If not already classified": {
+      "main": [
+        [
+          {
+            "node": "Execute Image Workflow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute Document Workflow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge with Ticketdata",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Execute Mail Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get API Key": {
+      "main": [
+        [
+          {
+            "node": "Get all last hours Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Ticket": {
+      "main": [[]]
+    },
+    "Execute Document Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Attachments",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Execute Image Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticket Information Extractor": {
+      "main": [
+        [
+          {
+            "node": "Add a comment with classification",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Draft Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "fix model output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Mail Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Mail and Attachments",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Mail and Attachments": {
+      "main": [
+        [
+          {
+            "node": "Merge with Ticketdata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Attachments": {
+      "main": [
+        [
+          {
+            "node": "Merge Mail and Attachments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge with Ticketdata": {
+      "main": [
+        [
+          {
+            "node": "Ticket Information Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Draft Ticket Response": {
+      "main": [
+        [
+          {
+            "node": "create message and wait for reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create message and wait for reply": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "send?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mistral-medium-latest": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ticket Information Extractor",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Draft Ticket Response",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "send?": {
+      "main": [
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "fix model output": {
+      "main": [
+        [
+          {
+            "node": "Draft Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Split Out": [
+      {
+        "id": 97092,
+        "companyId": 7,
+        "remitterId": 0,
+        "title": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
+        "content": "\nNew support request from\nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition\nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek",
+        "creationDate": 1755076066,
+        "assignedToEmployeeId": 0,
+        "assignedToDepartmentId": 0,
+        "statusId": 1,
+        "linkTypeId": 0,
+        "linkId": 0,
+        "deadlineDate": 0,
+        "project": false,
+        "projectId": 0,
+        "createdEmployeeId": 8371,
+        "typeId": 3,
+        "priority": 5,
+        "repair": false,
+        "reminder": 0,
+        "reactionHours": 0,
+        "dueDate": 1755090376,
+        "accesories": "",
+        "attention": "YES",
+        "orderById": 0,
+        "locked": false,
+        "relationshipLinkTypeId": 0,
+        "relationshipLinkId": 0,
+        "internalContent": "",
+        "resubmissionDate": 0,
+        "resubmissionText": "",
+        "phaseId": 0,
+        "estimatedMinutes": 0,
+        "localTicketAdminFlag": "NONE",
+        "localTicketAdminEmployeeId": 0,
+        "contractId": 0,
+        "lastStateChangeDate": 0,
+        "lastStateChangeEmployeeId": 0,
+        "modifiedBy": 0,
+        "modifiedTime": 0,
+        "numberOfDocuments": 0,
+        "chats": [],
+        "tags": [
+          {
+            "id": 78,
+            "name": "Ticket ohne Reaktion",
+            "backgroundColor": "#f78dee",
+            "fontColor": "#111212",
+            "description": "",
+            "image": "",
+            "groupTagId": 42,
+            "groupTagInheritance": true,
+            "unique": false,
+            "active": true,
+            "statistic": false,
+            "visibilities": [
+              {
+                "tagId": 42,
+                "linkTypeId": 34,
+                "linkId": 4,
+                "extras": {}
+              }
+            ],
+            "deleteAccess": [],
+            "isGroupParent": false,
+            "groupTag": {
+              "id": 42,
+              "name": "Support / Technik",
+              "backgroundColor": "#06c6c6",
+              "fontColor": "#000000",
+              "description": "",
+              "image": "",
+              "groupTagId": 0,
+              "groupTagInheritance": true,
+              "unique": false,
+              "active": true,
+              "statistic": false,
+              "visibilities": [
+                {
+                  "tagId": 42,
+                  "linkTypeId": 34,
+                  "linkId": 4,
+                  "extras": {}
+                }
+              ],
+              "deleteAccess": [],
+              "isGroupParent": false,
+              "isFavorite": false,
+              "mayRemove": true
+            },
+            "isFavorite": false,
+            "mayRemove": true
+          }
+        ]
+      }
+    ],
+    "Get all last hours Tickets": [
+      {
+        "meta": {
+          "text": "Object found",
+          "linkedEntities": {
+            "companies": {
+              "7": {
+                "name": "Test"
+              }
+            },
+            "tickets": {},
+            "ticketStates": {
+              "1": {
+                "image": "icon16px-01-neu.png",
+                "name": "neu",
+                "rank": 1
+              },
+              "1000": {
+                "image": "icon16px-10-erledigt.png",
+                "name": "erledigt",
+                "rank": 1000
+              }
+            },
+            "ticketTypes": {
+              "3": {
+                "name": "Störung"
+              }
+            },
+            "departments": {
+              "4": {
+                "name": "Technik/Support"
+              }
+            },
+            "employees": {
+              "8371": {
+                "initials": "MD",
+                "name": "Daiber, Matthias",
+                "email": "matthias.daiber@teclead-ventures.de"
+              }
+            },
+            "contracts": {},
+            "phases": {},
+            "costCenters": {},
+            "orderBys": {}
+          },
+          "properties": {
+            "extras": {
+              "count": 1
+            },
+            "editable": false
+          }
+        },
+        "content": [
+          {
+            "id": 97092,
+            "companyId": 7,
+            "remitterId": 0,
+            "title": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
+            "content": "\nNew support request from\nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition\nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek",
+            "creationDate": 1755076066,
+            "assignedToEmployeeId": 0,
+            "assignedToDepartmentId": 0,
+            "statusId": 1,
+            "linkTypeId": 0,
+            "linkId": 0,
+            "deadlineDate": 0,
+            "project": false,
+            "projectId": 0,
+            "createdEmployeeId": 8371,
+            "typeId": 3,
+            "priority": 5,
+            "repair": false,
+            "reminder": 0,
+            "reactionHours": 0,
+            "dueDate": 1755090376,
+            "accesories": "",
+            "attention": "YES",
+            "orderById": 0,
+            "locked": false,
+            "relationshipLinkTypeId": 0,
+            "relationshipLinkId": 0,
+            "internalContent": "",
+            "resubmissionDate": 0,
+            "resubmissionText": "",
+            "phaseId": 0,
+            "estimatedMinutes": 0,
+            "localTicketAdminFlag": "NONE",
+            "localTicketAdminEmployeeId": 0,
+            "contractId": 0,
+            "lastStateChangeDate": 0,
+            "lastStateChangeEmployeeId": 0,
+            "modifiedBy": 0,
+            "modifiedTime": 0,
+            "numberOfDocuments": 0,
+            "chats": [],
+            "tags": [
+              {
+                "id": 78,
+                "name": "Ticket ohne Reaktion",
+                "backgroundColor": "#f78dee",
+                "fontColor": "#111212",
+                "description": "",
+                "image": "",
+                "groupTagId": 42,
+                "groupTagInheritance": true,
+                "unique": false,
+                "active": true,
+                "statistic": false,
+                "visibilities": [
+                  {
+                    "tagId": 42,
+                    "linkTypeId": 34,
+                    "linkId": 4,
+                    "extras": {}
+                  }
+                ],
+                "deleteAccess": [],
+                "isGroupParent": false,
+                "groupTag": {
+                  "id": 42,
+                  "name": "Support / Technik",
+                  "backgroundColor": "#06c6c6",
+                  "fontColor": "#000000",
+                  "description": "",
+                  "image": "",
+                  "groupTagId": 0,
+                  "groupTagInheritance": true,
+                  "unique": false,
+                  "active": true,
+                  "statistic": false,
+                  "visibilities": [
+                    {
+                      "tagId": 42,
+                      "linkTypeId": 34,
+                      "linkId": 4,
+                      "extras": {}
+                    }
+                  ],
+                  "deleteAccess": [],
+                  "isGroupParent": false,
+                  "isFavorite": false,
+                  "mayRemove": true
+                },
+                "isFavorite": false,
+                "mayRemove": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "Add a comment with classification": [
+      {
+        "meta": {
+          "text": "Object successfully created",
+          "linkedEntities": {
+            "companies": {},
+            "tickets": {},
+            "ticketStates": {
+              "1000": {
+                "image": "icon16px-10-erledigt.png",
+                "name": "erledigt",
+                "rank": 1000
+              }
+            },
+            "ticketTypes": {},
+            "departments": {
+              "4": {
+                "name": "Technik/Support"
+              }
+            },
+            "employees": {
+              "2": {
+                "initials": "TL",
+                "name": "Lapp, Teuta",
+                "email": "T.Lapp@team-it-group.de"
+              },
+              "3": {
+                "initials": "UW",
+                "name": "Wintjens, Ulrich",
+                "email": "u.wintjens@team-it-group.de"
+              },
+              "4": {
+                "initials": "RD",
+                "name": "Dunkel, Ralf",
+                "email": "r.dunkel@team-it-group.de"
+              },
+              "5": {
+                "initials": "DJ",
+                "name": "Jacobs, Dominik",
+                "email": "d.jacobs@team-it-group.de"
+              },
+              "6": {
+                "initials": "BK",
+                "name": "Kühnapfel, Britta",
+                "email": "b.kuehnapfel@team-it-group.de"
+              }
+            },
+            "contracts": {},
+            "phases": {},
+            "costCenters": {},
+            "tags": {
+              "2": {
+                "image": "",
+                "backgroundColor": "#000000",
+                "statistic": false,
+                "description": "",
+                "groupTagInheritance": true,
+                "active": true,
+                "deleteAccess": [],
+                "isGroupParent": false,
+                "groupTag": {
+                  "id": 42,
+                  "name": "Support / Technik",
+                  "backgroundColor": "#06c6c6",
+                  "fontColor": "#000000",
+                  "description": "",
+                  "image": "",
+                  "groupTagId": 0,
+                  "groupTagInheritance": true,
+                  "unique": false,
+                  "active": true,
+                  "statistic": false,
+                  "visibilities": [
+                    {
+                      "tagId": 42,
+                      "linkTypeId": 34,
+                      "linkId": 4,
+                      "extras": {}
+                    }
+                  ],
+                  "deleteAccess": [],
+                  "isGroupParent": false,
+                  "isFavorite": false,
+                  "mayRemove": true
+                },
+                "unique": false,
+                "name": "Daily",
+                "visibilities": [
+                  {
+                    "tagId": 42,
+                    "linkTypeId": 34,
+                    "linkId": 4,
+                    "extras": {}
+                  }
+                ],
+                "id": 2,
+                "groupTagId": 42,
+                "fontColor": "#ffffff",
+                "mayRemove": true
+              }
+            },
+            "orderBys": {}
+          },
+          "properties": {
+            "extras": {
+              "dueDateWarnings": {
+                "orange": {
+                  "warningTimeType": "HOURS_BEFORE",
+                  "warningTime": 2
+                },
+                "yellow": {
+                  "warningTimeType": "TODAY"
+                }
+              },
+              "notificationsSentTo": [],
+              "showTicketTitle": true,
+              "canSeeAssignedDepartment": true,
+              "waitingStates": [8],
+              "showTicketType": true,
+              "canSeeAssignedTechnician": true,
+              "doneIconName": "icon16px-10-erledigt.png",
+              "ticketTags": [],
+              "prefs": [
+                {
+                  "sectionId": 22,
+                  "assignmentId": 8371,
+                  "preferenceId": 11,
+                  "value": 0
+                },
+                {
+                  "sectionId": 22,
+                  "assignmentId": 8371,
+                  "preferenceId": 68,
+                  "value": 0
+                }
+              ]
+            }
+          }
+        },
+        "content": {
+          "id": 143370,
+          "date": 1755085079,
+          "type": "TICKET_COMMENT",
+          "employeeId": 8371,
+          "categoryId": 0,
+          "productId": 0,
+          "commentOfId": 97092,
+          "title": "Automatic AI Classification",
+          "content": "Summary: Der PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB, wodurch Prozesse häufig abstürzen oder ewig brauchen.\nCategory: Software\nProblem Location: KI236, Windows 11 Professional Edition\nCustomer Actions: Der Kunde hat bereits den Task-Manager überprüft und festgestellt, dass der PC nicht den gesamten verfügbaren Arbeitsspeicher nutzt.\nAttachment Summary: Zwei Screenshots des Task-Managers, die die CPU-, Speicher- und Netzwerknutzung verschiedener Anwendungen zeigen.\nAttachment Analysis: Die Screenshots zeigen, dass der PC nicht den gesamten verfügbaren Arbeitsspeicher nutzt, was möglicherweise auf eine Konfigurations- oder Software-Problematik hinweist.",
+          "toEmployeeId": 0,
+          "completedDate": 0,
+          "internal": false,
+          "path": []
+        }
+      }
+    ],
+    "Get API Key": [
+      {
+        "apiKey": "Bearer eyJraWQiOiJ4NXB1NDEiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MzcxIiwiZXhwIjoxNzU1MDk5NDQ4LCJ0eXBlIjoiQUNDRVNTIn0.uMN4gH5sLCHwgIlSRPMIXTSr7fgOM-AzzZ2wesnv2si8BrDvBrPH_RgLQR46rvTgz-GYsX0A5mqt3h5TKCXSUf1fIANZGFLS8bA6pWjV_XW1Zu2kylTznq_TMHiCfCkS3_LdZiRnAsk_AA1eGOwF_7Di2T5phQExnWemolKrozE",
+        "expire": "2025-08-13T11:37:28.000-04:00"
+      }
+    ],
+    "Execute Document Workflow": [
+      {
+        "id": 97092,
+        "numberOfDocuments": 0
+      }
+    ],
+    "Execute Image Workflow": [
+      {
+        "images": [
+          {
+            "fileName": "Task-Manager.png",
+            "imageSummary": "The image shows the Task Manager window with various applications listed and their respective CPU, memory, and network usage. The applications include Autodesk Revit, Revit5, Microsoft OneDrive, Microsoft Edge, Microsoft Teams, Sophos Endpoint Defense, Windows-Widgets, and others. The CPU usage ranges from 0% to 4.8%, memory usage from 175.8 MB to 2,061.9 MB, and network usage is minimal or zero for most applications."
+          },
+          {
+            "fileName": "Task-Manager.png",
+            "imageSummary": "The image shows the Task Manager on a Windows operating system. Key details include: CPU usage at 8%, memory usage at 45% (28.7/63.6 GB), SSD temperature at 2% (NVMe), Ethernet speed at 16.0 KBit/s, GPU 0 usage at 15% (NVIDIA RTX A4000) with a temperature of 36°C, and GPU 1 usage at 0%. The system has a total of 64.0 GB of memory with 63.6 GB available. In the performance section, 28.4 GB (116 MB) is in use, and 34.9 GB is available. The cache is at 31.8/67.6 GB, and 31.7 GB is available. The system uses 4400 MHz memory with 2 of 4 slots in use and 376 MB of hardware reserved. The available memory pool is 1.5 GB, and the non-available memory pool is 1.4 GB."
+          }
+        ]
+      }
+    ],
+    "Execute Mail Workflow": [
+      {
+        "inboundMails": [
+          {
+            "senderName": "noreply@rmmservice.com",
+            "subject": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
+            "bodyPlain": "New support request from \nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition \nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek\n"
+          }
+        ],
+        "outboundMails": []
+      }
+    ],
+    "Merge Mail and Attachments": [
+      {
+        "images": [
+          {
+            "fileName": "Task-Manager.png",
+            "imageSummary": "The image shows the Task Manager window with various applications listed and their respective CPU, memory, and network usage. The applications include Autodesk Revit, Revit5, Microsoft OneDrive, Microsoft Edge, Microsoft Teams, Sophos Endpoint Defense, Windows-Widgets, and others. The CPU usage ranges from 0% to 4.8%, memory usage from 175.8 MB to 2,061.9 MB, and network usage is minimal or zero for most applications."
+          },
+          {
+            "fileName": "Task-Manager.png",
+            "imageSummary": "The image shows the Task Manager on a Windows operating system. Key details include: CPU usage at 8%, memory usage at 45% (28.7/63.6 GB), SSD temperature at 2% (NVMe), Ethernet speed at 16.0 KBit/s, GPU 0 usage at 15% (NVIDIA RTX A4000) with a temperature of 36°C, and GPU 1 usage at 0%. The system has a total of 64.0 GB of memory with 63.6 GB available. In the performance section, 28.4 GB (116 MB) is in use, and 34.9 GB is available. The cache is at 31.8/67.6 GB, and 31.7 GB is available. The system uses 4400 MHz memory with 2 of 4 slots in use and 376 MB of hardware reserved. The available memory pool is 1.5 GB, and the non-available memory pool is 1.4 GB."
+          }
+        ],
+        "id": 97092,
+        "numberOfDocuments": 0,
+        "inboundMails": [
+          {
+            "senderName": "noreply@rmmservice.com",
+            "subject": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
+            "bodyPlain": "New support request from \nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition \nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek\n"
+          }
+        ],
+        "outboundMails": []
+      }
+    ],
+    "Merge Attachments": [
+      {
+        "images": [
+          {
+            "fileName": "Task-Manager.png",
+            "imageSummary": "The image shows the Task Manager window with various applications listed and their respective CPU, memory, and network usage. The applications include Autodesk Revit, Revit5, Microsoft OneDrive, Microsoft Edge, Microsoft Teams, Sophos Endpoint Defense, Windows-Widgets, and others. The CPU usage ranges from 0% to 4.8%, memory usage from 175.8 MB to 2,061.9 MB, and network usage is minimal or zero for most applications."
+          },
+          {
+            "fileName": "Task-Manager.png",
+            "imageSummary": "The image shows the Task Manager on a Windows operating system. Key details include: CPU usage at 8%, memory usage at 45% (28.7/63.6 GB), SSD temperature at 2% (NVMe), Ethernet speed at 16.0 KBit/s, GPU 0 usage at 15% (NVIDIA RTX A4000) with a temperature of 36°C, and GPU 1 usage at 0%. The system has a total of 64.0 GB of memory with 63.6 GB available. In the performance section, 28.4 GB (116 MB) is in use, and 34.9 GB is available. The cache is at 31.8/67.6 GB, and 31.7 GB is available. The system uses 4400 MHz memory with 2 of 4 slots in use and 376 MB of hardware reserved. The available memory pool is 1.5 GB, and the non-available memory pool is 1.4 GB."
+          }
+        ],
+        "id": 97092,
+        "numberOfDocuments": 0
+      }
+    ],
+    "Merge with Ticketdata": [
+      {
+        "images": [
+          {
+            "fileName": "Task-Manager.png",
+            "imageSummary": "The image shows the Task Manager window with various applications listed and their respective CPU, memory, and network usage. The applications include Autodesk Revit, Revit5, Microsoft OneDrive, Microsoft Edge, Microsoft Teams, Sophos Endpoint Defense, Windows-Widgets, and others. The CPU usage ranges from 0% to 4.8%, memory usage from 175.8 MB to 2,061.9 MB, and network usage is minimal or zero for most applications."
+          },
+          {
+            "fileName": "Task-Manager.png",
+            "imageSummary": "The image shows the Task Manager on a Windows operating system. Key details include: CPU usage at 8%, memory usage at 45% (28.7/63.6 GB), SSD temperature at 2% (NVMe), Ethernet speed at 16.0 KBit/s, GPU 0 usage at 15% (NVIDIA RTX A4000) with a temperature of 36°C, and GPU 1 usage at 0%. The system has a total of 64.0 GB of memory with 63.6 GB available. In the performance section, 28.4 GB (116 MB) is in use, and 34.9 GB is available. The cache is at 31.8/67.6 GB, and 31.7 GB is available. The system uses 4400 MHz memory with 2 of 4 slots in use and 376 MB of hardware reserved. The available memory pool is 1.5 GB, and the non-available memory pool is 1.4 GB."
+          }
+        ],
+        "id": 97092,
+        "numberOfDocuments": 0,
+        "inboundMails": [
+          {
+            "senderName": "noreply@rmmservice.com",
+            "subject": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
+            "bodyPlain": "New support request from \nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition \nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek\n"
+          }
+        ],
+        "outboundMails": [],
+        "companyId": 7,
+        "remitterId": 0,
+        "title": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
+        "content": "\nNew support request from\nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition\nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek",
+        "creationDate": 1755076066,
+        "assignedToEmployeeId": 0,
+        "assignedToDepartmentId": 0,
+        "statusId": 1,
+        "linkTypeId": 0,
+        "linkId": 0,
+        "deadlineDate": 0,
+        "project": false,
+        "projectId": 0,
+        "createdEmployeeId": 8371,
+        "typeId": 3,
+        "priority": 5,
+        "repair": false,
+        "reminder": 0,
+        "reactionHours": 0,
+        "dueDate": 1755090376,
+        "accesories": "",
+        "attention": "YES",
+        "orderById": 0,
+        "locked": false,
+        "relationshipLinkTypeId": 0,
+        "relationshipLinkId": 0,
+        "internalContent": "",
+        "resubmissionDate": 0,
+        "resubmissionText": "",
+        "phaseId": 0,
+        "estimatedMinutes": 0,
+        "localTicketAdminFlag": "NONE",
+        "localTicketAdminEmployeeId": 0,
+        "contractId": 0,
+        "lastStateChangeDate": 0,
+        "lastStateChangeEmployeeId": 0,
+        "modifiedBy": 0,
+        "modifiedTime": 0,
+        "chats": [],
+        "tags": [
+          {
+            "id": 78,
+            "name": "Ticket ohne Reaktion",
+            "backgroundColor": "#f78dee",
+            "fontColor": "#111212",
+            "description": "",
+            "image": "",
+            "groupTagId": 42,
+            "groupTagInheritance": true,
+            "unique": false,
+            "active": true,
+            "statistic": false,
+            "visibilities": [
+              {
+                "tagId": 42,
+                "linkTypeId": 34,
+                "linkId": 4,
+                "extras": {}
+              }
+            ],
+            "deleteAccess": [],
+            "isGroupParent": false,
+            "groupTag": {
+              "id": 42,
+              "name": "Support / Technik",
+              "backgroundColor": "#06c6c6",
+              "fontColor": "#000000",
+              "description": "",
+              "image": "",
+              "groupTagId": 0,
+              "groupTagInheritance": true,
+              "unique": false,
+              "active": true,
+              "statistic": false,
+              "visibilities": [
+                {
+                  "tagId": 42,
+                  "linkTypeId": 34,
+                  "linkId": 4,
+                  "extras": {}
+                }
+              ],
+              "deleteAccess": [],
+              "isGroupParent": false,
+              "isFavorite": false,
+              "mayRemove": true
+            },
+            "isFavorite": false,
+            "mayRemove": true
+          }
+        ]
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cb82cb908cab52e40008ef27de71c2aa4d5b63789fd0294ce950d5a085fdc1d1"
+  }
+}
