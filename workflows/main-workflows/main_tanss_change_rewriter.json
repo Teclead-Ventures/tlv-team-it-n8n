@@ -17,8 +17,8 @@
       },
       "type": "n8n-nodes-base.microsoftTeamsTrigger",
       "typeVersion": 1,
-      "position": [-1600, 1040],
-      "id": "915becbd-cee9-4829-b9c1-302d08f6431c",
+      "position": [-2384, -32],
+      "id": "b02af19c-cb68-4b07-b5df-10b4de16430c",
       "name": "On Teams message",
       "webhookId": "130530eb-9a73-4ac1-ab88-5450da59feb2",
       "credentials": {
@@ -54,8 +54,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [-1424, 1040],
-      "id": "c7da655b-1704-4411-b128-d2065d2c85b7",
+      "position": [-2208, -32],
+      "id": "b6461972-9a1f-49a2-8b7a-a80800d6eb31",
       "name": "Is CHANGE reply?"
     },
     {
@@ -65,8 +65,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-1216, 1024],
-      "id": "48b4ca0b-df82-4d66-924d-b1845480ebce",
+      "position": [-2000, -48],
+      "id": "bca7ea50-da93-4ca2-811e-348e6d2ddbbd",
       "name": "Extract reply context"
     },
     {
@@ -84,8 +84,8 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-848, 1184],
-      "id": "a35f8b36-ed57-4933-94af-07862e1f8755",
+      "position": [-1632, 128],
+      "id": "20386f55-7fee-4ed6-a3f1-0e3631b00ade",
       "name": "Get parent message",
       "credentials": {
         "microsoftTeamsOAuth2Api": {
@@ -109,8 +109,8 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-1008, 976],
-      "id": "69a0fbef-2d15-4ce8-9621-8ac6cb365103",
+      "position": [-1792, -96],
+      "id": "c283ec94-103f-4ac2-ac86-949a4c895287",
       "name": "Get reply message",
       "credentials": {
         "microsoftTeamsOAuth2Api": {
@@ -145,8 +145,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [-848, 976],
-      "id": "c7b50307-a581-48db-be27-8ad2dd531bd7",
+      "position": [-1632, -96],
+      "id": "9be4374a-3076-4504-939c-6fc79d1946ac",
       "name": "Has CHANGE prefix?"
     },
     {
@@ -157,19 +157,19 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [-400, 1040],
-      "id": "eac39fa6-9a94-4d33-b0ab-77a71952f7af",
+      "position": [-1184, -32],
+      "id": "5404072a-7e58-44ec-b142-1261f945f230",
       "name": "Merge reply + parent"
     },
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Extract useful fields from merged item (reply context + parent message)\nconst replyText = $json.replyText || '';\nconst parentHtml = $json.body?.content || $json.parentHtml || '';\n\nfunction stripTags(s) { return s.replace(/<[^>]*>/g, '').trim(); }\nconst cleanReply = stripTags(replyText).replace(/^CHANGE:\\s*/i, '').trim();\n\n// Extract Ticket ID from parent HTML\nlet ticketId = null;\nconst idMatch = parentHtml.match(/<li><strong>Ticket ID<\\/strong>:\\s*([^<]+)<\\/li>/i);\nif (idMatch) ticketId = idMatch[1].trim();\n\n// Extract original draft inside first <pre>...</pre>\nlet originalDraft = '';\nconst preMatch = parentHtml.match(/<pre[^>]*>([\\s\\S]*?)<\\/pre>/i);\nif (preMatch) {\n  originalDraft = preMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').trim();\n}\n\n// Extract first Approve link (resumeUrl)\nlet approveLink = null;\nconst linkMatch = parentHtml.match(/<a[^>]+href=\\\"([^\\\"]*resume[^\\\"]*)\\\"[^>]*>[^<]*Approve[^<]*<\\/a>/i) || parentHtml.match(/<a[^>]+href=\\\"([^\\\"]*resumeUrl[^\\\"]*)\\\"/i);\nif (linkMatch) approveLink = linkMatch[1];\n\nreturn { ticketId, originalDraft, changeRequest: cleanReply, parentHtml, approveLink, parentMessageId: $json.replyToId, teamId: $json.teamId, channelId: $json.channelId };"
+        "jsCode": "// Extract useful fields from merged item (reply context + parent message)\nconst replyText = $json.replyText || '';\nconst parentHtml = $json.body?.content || $json.parentHtml || '';\n\nfunction stripTags(s) { return s.replace(/<[^>]*>/g, '').trim(); }\nconst cleanReply = stripTags(replyText).replace(/^CHANGE:\\s*/i, '').trim();\n\n// Extract Ticket ID from parent HTML\nlet ticketId = null;\nconst idMatch = parentHtml.match(/<li><strong>Ticket ID<\\/strong>:\\s*([^<]+)<\\/li>/i);\nif (idMatch) ticketId = idMatch[1].trim();\n\n// Extract original draft inside first <pre>...</pre>\nlet originalDraft = '';\nconst preMatch = parentHtml.match(/<pre[^>]*>([\\s\\S]*?)<\\/pre>/i);\nif (preMatch) {\n  originalDraft = preMatch[1].replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').trim();\n}\n\n// Extract first Approve link (resumeUrl)\nlet approveLink = null;\nconst linkMatch = parentHtml.match(/<a[^>]+href=\\\"([^\\\"]*resume[^\\\"]*)\\\"[^>]*>[^<]*Approve[^<]*<\\/a>/i) || parentHtml.match(/<a[^>]+href=\\\"([^\\\"]*resumeUrl[^\\\"]*)\\\"/i);\nif (linkMatch) approveLink = linkMatch[1];\n\n// Pull reply context (team/channel/parent IDs) from the earlier node\nconst ctx = $('Extract reply context').item.json || {};\nconst teamId = ctx.teamId || null;\nconst channelId = ctx.channelId || null;\nconst parentMessageId = ctx.parentMessageId || null;\n\nreturn { ticketId, originalDraft, changeRequest: cleanReply, parentHtml, approveLink, parentMessageId, teamId, channelId };"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-224, 1040],
-      "id": "6952854a-fbb3-4e8d-a9c1-73a8e2261792",
+      "position": [-1008, -32],
+      "id": "1d4d3cfa-5132-4311-a09e-445f9d992cbc",
       "name": "Parse context"
     },
     {
@@ -187,42 +187,9 @@
       },
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
-      "position": [0, 1040],
-      "id": "71c477f5-67fe-4a8d-8ead-64486787db72",
+      "position": [-784, -32],
+      "id": "72977fff-a2bc-4b06-905d-5cb5740da748",
       "name": "Rewrite with changes"
-    },
-    {
-      "parameters": {
-        "resource": "channelMessage",
-        "teamId": {
-          "__rl": true,
-          "value": "19231660-890a-4d8c-aa37-eec9155a7382",
-          "mode": "list",
-          "cachedResultName": "tlv-n8n-team"
-        },
-        "channelId": {
-          "__rl": true,
-          "value": "19:QkBEBfBTzgie0IpxWzP6TlQu71o5V7xNOshVTwxLjss1@thread.tacv2",
-          "mode": "list",
-          "cachedResultName": "ai-confirmations",
-          "cachedResultUrl": "https://teams.cloud.microsoft/l/channel/19%3AQkBEBfBTzgie0IpxWzP6TlQu71o5V7xNOshVTwxLjss1%40thread.tacv2/tlv-n8n-team?groupId=19231660-890a-4d8c-aa37-eec9155a7382&tenantId=f50f53d7-0e4f-4626-a1a9-9fe190a9fe64&allowXTenantAccess=True&ngc=True"
-        },
-        "contentType": "html",
-        "message": "=<div style=\"margin:0;padding:0;font-family:'Segoe UI', Arial, sans-serif;\">\n\t<div style=\"max-width:760px;margin:0 auto;\">\n\t\t<p style=\"margin:0 0 12px 0;font-weight:600;font-size:16px;\">Updated Draft Ready</p>\n\n\t\t<hr style=\"margin:8px 0 12px 0;\">\n\n<p style=\"margin:12px 0 6px 0;font-weight:600;\">Full draft (to be posted to TANSS as a public reply)</p>\n\t\t<pre style=\"margin:0 0 12px 0;white-space:pre-wrap;max-height:380px;overflow:auto;\">\n{{$json.text.trim()}}\n\t\t</pre>\n\n\t\t<p style=\"margin-top:12px;\">\n\t\t\t<a href=\"{{ $('Parse context').item.json.approveLink }}\">Approve Updated Draft</a>\n\t\t</p>\n\t</div>\n</div>",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.microsoftTeams",
-      "typeVersion": 2,
-      "position": [352, 1040],
-      "id": "455c8026-53bc-4674-a02b-fbe8bc51b2f9",
-      "name": "Reply with updated draft",
-      "webhookId": "1ced7218-53e6-47e7-ae71-5bb4be8278c5",
-      "credentials": {
-        "microsoftTeamsOAuth2Api": {
-          "id": "JfBX4Cn1M8SQBnFV",
-          "name": "Microsoft Teams account"
-        }
-      }
     },
     {
       "parameters": {
@@ -240,8 +207,8 @@
       },
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
-      "position": [-640, 960],
-      "id": "8d0b3d17-88cc-4f37-a999-76fc44ee9ae5",
+      "position": [-1424, -112],
+      "id": "81cbf20f-d945-46c2-aa41-35f1156505aa",
       "name": "save reply text"
     },
     {
@@ -253,13 +220,56 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
-      "position": [0, 1264],
-      "id": "8daaddc5-725f-4c09-8fee-ac89160d5363",
+      "position": [-784, 208],
+      "id": "2fb4d0dd-0c79-41f1-a481-29f77b71adb1",
       "name": "mistral-small-latest",
       "credentials": {
         "mistralCloudApi": {
           "id": "OKqIIU4OvY7yKbuT",
           "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Build updated HTML by replacing first <pre>...</pre> with the rewritten draft\nconst parentHtml = $('Parse context').item.json.parentHtml || '';\nconst newText = ($json.text || '').trim();\nfunction escapeHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }\nconst escaped = escapeHtml(newText);\nlet updatedHtml = parentHtml;\nif (parentHtml) {\n  updatedHtml = parentHtml.replace(/<pre[^>]*>[\\s\\S]*?<\\/pre>/i, `<pre style=\"margin:0 0 12px 0;white-space:pre-wrap;max-height:380px;overflow:auto;\">\\n${escaped}\\n\t\t</pre>`);\n}\nreturn { updatedHtml };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-416, -32],
+      "id": "9e47be72-8d81-4a81-bba9-8e5d3d96fb73",
+      "name": "Build updated HTML"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ 'https://graph.microsoft.com/v1.0/teams/' + $('Parse context').item.json.teamId + '/channels/' + $('Parse context').item.json.channelId + '/messages/' + $('Parse context').item.json.parentMessageId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftTeamsOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { body: { contentType: 'html', content: $json.updatedHtml } } }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true,
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-192, -32],
+      "id": "5bc28ac9-8b89-43db-8fb2-bedfa0606c16",
+      "name": "Update parent message",
+      "alwaysOutputData": true,
+      "credentials": {
+        "microsoftTeamsOAuth2Api": {
+          "id": "JfBX4Cn1M8SQBnFV",
+          "name": "Microsoft Teams account"
         }
       }
     }
@@ -362,7 +372,7 @@
       "main": [
         [
           {
-            "node": "Reply with updated draft",
+            "node": "Build updated HTML",
             "type": "main",
             "index": 0
           }
@@ -386,6 +396,17 @@
           {
             "node": "Rewrite with changes",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build updated HTML": {
+      "main": [
+        [
+          {
+            "node": "Update parent message",
+            "type": "main",
             "index": 0
           }
         ]
