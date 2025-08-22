@@ -1,0 +1,780 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "id",
+              "type": "number"
+            },
+            {
+              "name": "numberOfDocuments",
+              "type": "number"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [144, 432],
+      "id": "13c0e45a-17d0-49db-a1b1-3d4d20d2daf8",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "uC4tCQ1uf8V5hQTZ",
+          "mode": "list",
+          "cachedResultName": "test_tanss_login"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": true
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [336, 240],
+      "id": "ba4bf7c3-7400-4372-aae1-243429413d86",
+      "name": "Get API Key"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [560, 416],
+      "id": "451a119e-a9eb-4a08-b46e-048d55bccb95",
+      "name": "Merge Context"
+    },
+    {
+      "parameters": {
+        "url": "=https://helpdesk.team-it-group.de/backend/api/v1/tickets/{{ $json.id }}/screenshots",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [800, 160],
+      "id": "8152af20-7edd-4127-96a2-84cd045eda7f",
+      "name": "Get Images and Screenshots",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cfa9af2c-4432-4000-857a-51ac0e766b53",
+              "leftValue": "={{$json.content}}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [976, 160],
+      "id": "7b8a10eb-3f6a-41da-baf2-37998d89cd44",
+      "name": "images exist?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1168, 368],
+      "id": "62dc3419-0851-4a0d-abba-c35b83287982",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "=content",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1184, 64],
+      "id": "8aea0add-ae06-4ff5-86cd-4c6dce1296d3",
+      "name": "Split Image List"
+    },
+    {
+      "parameters": {
+        "url": "=https://helpdesk.team-it-group.de/backend/api/v1/tickets/{{ $json.ticketId }}/screenshots/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1392, 64],
+      "id": "ef28d4cd-cc42-4bae-9f9f-e28780403d09",
+      "name": "Get Image Content Meta",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://helpdesk.team-it-group.de/backend{{ $json.content.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1600, 64],
+      "id": "6fb62118-269f-4d6d-8d46-40305f35477e",
+      "name": "Get Image Content",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b2b0a6a-6e90-4b5a-9d7c-7a1d0d9e9f01",
+              "name": "fileName",
+              "value": "={{ $json.output.fileName }}",
+              "type": "string"
+            },
+            {
+              "id": "9d1f5c2e-3a4b-4d7f-b0e4-8c3f9a2b7cde",
+              "name": "imageSummary",
+              "value": "={{ $json.output.imageSummary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2384, 64],
+      "id": "7848ebe6-b41d-4929-9fe8-3d6ac0488564",
+      "name": "Format Image Object"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "images",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [2608, 64],
+      "id": "3cb4499e-8541-4061-a568-4e43bc02889d",
+      "name": "Aggregate all Images"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analyze the given attached Image from a Support Ticket and give a concise summary of the content visible in the image. If the image contains data (e.g. a table with numbers), summarize the data seen.\nAlso always return the filename.\nReturn a plain JSON Object (NO Markdown, NO Formatting) in the following format exmaple:\n{\n  \"fileName\": \"{{$binary.data.fileName}}\",\n  \"imageSummary\": \"The image contains ...\"\n}",
+        "hasOutputParser": true,
+        "options": {
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [1792, 64],
+      "id": "5589c98e-fe90-4634-89d8-5b533d31321e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "pixtral-12b-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [1792, 304],
+      "id": "fa8fa75f-e64f-4d7c-8ddf-28dc0ab3c4a5",
+      "name": "pixtral-12b",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "OKqIIU4OvY7yKbuT",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const rawString = $json.text;\n\n// Find the start of the JSON object\nconst startIndex = rawString.indexOf('{');\n// Find the end of the JSON object\nconst endIndex = rawString.lastIndexOf('}');\n\n// Extract the substring that contains only the JSON\nconst jsonString = rawString.substring(startIndex, endIndex + 1);\n\n// Parse the clean string into a JSON object and return it\n// This object will be the output of this node.\nreturn JSON.parse(jsonString);"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2176, 64],
+      "id": "5c987b20-df08-48e0-ac39-7c55f40da087",
+      "name": "Parse JSON String"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3f063c2a-f041-48c1-a30f-549932c22a53",
+              "leftValue": "={{ $json.numberOfDocuments }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [800, 656],
+      "id": "aaf7156e-5437-428c-9964-e537b73c06d5",
+      "name": "documents exist?"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "content",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [1200, 640],
+      "id": "1a2a69c4-9342-4df1-a657-03738e242ff1",
+      "name": "Split Out1"
+    },
+    {
+      "parameters": {
+        "url": "=https://helpdesk.team-it-group.de/backend/api/v1/tickets/{{ $json.id }}/documents",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1024, 640],
+      "id": "1753db86-67ae-44fd-b642-f75426aa0bef",
+      "name": "Get All Documents from Ticket",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://helpdesk.team-it-group.de/backend/api/v1/tickets/{{ $json.ticketId }}/documents/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1408, 640],
+      "id": "15fe1039-52ab-411e-9c55-696fed4ca14e",
+      "name": "Get Document Content Meta",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://helpdesk.team-it-group.de/backend{{ $json.content.url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1616, 640],
+      "id": "d63e2665-e6e8-4a66-a4e7-2e478fc7cced",
+      "name": "Get Document Content",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operationMode": "nodeInputBinary",
+        "chunkSize": 50000,
+        "chunkOverlap": 1000,
+        "options": {
+          "summarizationMethodAndPrompts": {
+            "values": {
+              "summarizationMethod": "refine",
+              "refineQuestionPrompt": "Write a concise summary of the following part of a document:\n\n\n\"{text}\"\n\n\nCONCISE SUMMARY:"
+            }
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainSummarization",
+      "typeVersion": 2.1,
+      "position": [1792, 736],
+      "id": "b4cfafc6-273c-4a9e-80d6-2b63f7b484da",
+      "name": "Summarization Chain"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [2160, 656],
+      "id": "da03f417-133e-4e40-981f-7530e0f22ee5",
+      "name": "Merge Summary + Filedata"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c3bbdd1f-3adc-424d-86d0-bf8c267b06f1",
+              "name": "title",
+              "value": "={{ $binary.data.fileName }}",
+              "type": "string"
+            },
+            {
+              "id": "3ba24a72-5936-453b-ba67-8c14f3849bf1",
+              "name": "summary_text",
+              "value": "={{ $json.output.output_text }}",
+              "type": "string"
+            },
+            {
+              "id": "642e1833-d5a8-4619-acb7-addfbdc76f35",
+              "name": "format",
+              "value": "={{ $binary.data.mimeType }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [2384, 656],
+      "id": "d0bb05bc-4bf8-428b-b817-ddf728865a5f",
+      "name": "Format Document Object"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "documents",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [2608, 656],
+      "id": "c60f14e8-c43d-4600-9409-3ba0d4983d83",
+      "name": "Aggregate all Documents"
+    },
+    {
+      "parameters": {
+        "model": "mistral-small-latest",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
+      "typeVersion": 1,
+      "position": [1792, 464],
+      "id": "c2cda7e6-0aa8-436b-a22c-7048249aed50",
+      "name": "mistral-small-latest",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "OKqIIU4OvY7yKbuT",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [2864, 368],
+      "id": "2cfa8152-0613-4733-9c97-6930fe24db26",
+      "name": "Merge Documents + Images"
+    },
+    {
+      "parameters": {
+        "content": "# Image Attachment Analysis Workflow",
+        "height": 528,
+        "width": 2080,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [720, -112],
+      "typeVersion": 1,
+      "id": "512de97e-e16a-4ae6-b181-6a3646f0847b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n# Document Attachment Analysis Workflow",
+        "height": 528,
+        "width": 2080,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [720, 416],
+      "typeVersion": 1,
+      "id": "69004d16-f33f-48b3-8082-ec670d11394a",
+      "name": "Sticky Note1"
+    }
+  ],
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get API Key",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Context",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get API Key": {
+      "main": [
+        [
+          {
+            "node": "Merge Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Context": {
+      "main": [
+        [
+          {
+            "node": "Get Images and Screenshots",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "documents exist?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Images and Screenshots": {
+      "main": [
+        [
+          {
+            "node": "images exist?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "images exist?": {
+      "main": [
+        [
+          {
+            "node": "Split Image List",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Image List": {
+      "main": [
+        [
+          {
+            "node": "Get Image Content Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Content Meta": {
+      "main": [
+        [
+          {
+            "node": "Get Image Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Image Content": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Image Object": {
+      "main": [
+        [
+          {
+            "node": "Aggregate all Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate all Images": {
+      "main": [
+        [
+          {
+            "node": "Merge Documents + Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Parse JSON String",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "pixtral-12b": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse JSON String": {
+      "main": [
+        [
+          {
+            "node": "Format Image Object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "documents exist?": {
+      "main": [
+        [
+          {
+            "node": "Get All Documents from Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out1": {
+      "main": [
+        [
+          {
+            "node": "Get Document Content Meta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Documents from Ticket": {
+      "main": [
+        [
+          {
+            "node": "Split Out1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Document Content Meta": {
+      "main": [
+        [
+          {
+            "node": "Get Document Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Document Content": {
+      "main": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge Summary + Filedata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summarization Chain": {
+      "main": [
+        [
+          {
+            "node": "Merge Summary + Filedata",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge Summary + Filedata": {
+      "main": [
+        [
+          {
+            "node": "Format Document Object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Document Object": {
+      "main": [
+        [
+          {
+            "node": "Aggregate all Documents",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate all Documents": {
+      "main": [
+        [
+          {
+            "node": "Merge Documents + Images",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "mistral-small-latest": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summarization Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "cb82cb908cab52e40008ef27de71c2aa4d5b63789fd0294ce950d5a085fdc1d1"
+  }
+}

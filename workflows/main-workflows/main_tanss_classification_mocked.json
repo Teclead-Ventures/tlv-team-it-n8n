@@ -170,55 +170,6 @@
     },
     {
       "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "JX9l3asxIfeXCOyb",
-          "mode": "list",
-          "cachedResultName": "sub_tanss_get_documents"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id": "={{ $json.id }}",
-            "numberOfDocuments": "={{ $json.numberOfDocuments }}"
-          },
-          "matchingColumns": [],
-          "schema": [
-            {
-              "id": "id",
-              "displayName": "id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "number"
-            },
-            {
-              "id": "numberOfDocuments",
-              "displayName": "numberOfDocuments",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "number",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {
-          "waitForSubWorkflow": true
-        }
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.2,
-      "position": [-80, 400],
-      "id": "937ec6f2-ec51-4af5-83b7-b9cae98d14ec",
-      "name": "Execute Document Workflow"
-    },
-    {
-      "parameters": {
         "content": "## Todo's\n* When to trigger the flow?\n* Which Tickets should be fetched (company, employee, board)?\n* Only new tickets?",
         "height": 432,
         "width": 672
@@ -231,61 +182,12 @@
     },
     {
       "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "QVVSuDhw3tvLqUpP",
-          "mode": "list",
-          "cachedResultName": "sub_tanss_images"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id": "={{ $json.id }}"
-          },
-          "matchingColumns": ["id"],
-          "schema": [
-            {
-              "id": "id",
-              "displayName": "id",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "number",
-              "removed": false
-            },
-            {
-              "id": "context",
-              "displayName": "context",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "string",
-              "removed": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {
-          "waitForSubWorkflow": true
-        }
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.2,
-      "position": [-80, 240],
-      "id": "a4635062-c686-41ca-b41e-84e3e7c3a26f",
-      "name": "Execute Image Workflow"
-    },
-    {
-      "parameters": {
         "content": "## Sub-Workflows",
-        "height": 576,
+        "height": 416,
         "color": 2
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [-160, 176],
+      "position": [-160, 336],
       "typeVersion": 1,
       "id": "b198715f-8ad9-4b19-a851-0306199c54d6",
       "name": "Sticky Note2"
@@ -296,7 +198,7 @@
         "schemaType": "manual",
         "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\",\n      \"description\": \"The original id of the processed Ticket\"\n    },\n    \"summary\": {\n      \"type\": \"string\",\n      \"description\": \"A few sentence summary of the issue.\"\n    },\n    \"category\": {\n      \"type\": \"string\",\n      \"description\": \"The category of the ticket.\",\n      \"enum\": [\n        \"Hardware\",\n        \"Software\",\n        \"Network\",\n        \"Account\",\n        \"Other\"\n      ]\n    },\n    \"department_id\": {\n      \"type\": \"integer\",\n      \"description\": \"The numeric ID of the department best suited to handle the ticket.\",\n      \"enum\": [12, 4, 6]\n    },\n    \"problem_location\": {\n      \"type\": \"string\",\n      \"description\": \"Where the problem is occurring (e.g., office room, device, software name).\"\n    },\n    \"customer_actions\": {\n      \"type\": \"string\",\n      \"description\": \"A summary of what the customer has already tried.\"\n    },\n    \"priority\": {\n      \"type\": \"integer\",\n      \"description\": \"The priority level of the ticket from 1 (low) to 9 (high).\"\n    },\n    \"attachment_summary\": {\n      \"type\": \"string\",\n      \"description\": \"short summary of the content from all attachments, images and documents provided (if any)\"\n    },\n    \"attachment_analysis\": {\n      \"type\": \"string\",\n      \"description\": \"A detailed analysis on how the attachments content relates to the ticket itself and what additional information on the problem can be extracted from it\"\n    },  \n    \"clarification_questions\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      },\n      \"description\": \"A list of detailed and fitting questions to the customer to clarify open questions.\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"summary\",\n    \"category\",\n    \"department_id\",\n    \"problem_location\",\n    \"customer_actions\",\n    \"priority\",\n    \"attachment_summary\",\n    \"clarification_questions\"\n  ]\n}",
         "options": {
-          "systemPromptTemplate": "=You are an expert IT support ticket analyst and dispatcher. Your task is to analyze the support ticket provided by the user, classify it, route it to the correct department, and formulate precise questions to gather any missing information.\n\n-----\n\n### **Instructions**\n\n1.  **Analyze the Ticket:** Carefully review the ticket content and any attached document summaries. If the ticket content is empty, the content can be found in inbound Mails. Treat inbound mails as ticket content \n2.  **Formulate Clarification Questions:** Based on your analysis, identify what information is missing to fully resolve the issue. Create a list of detailed and specific questions for the customer. The goal of these questions is to gather all necessary information so the support team can act immediately upon receiving the customer's answers.\n3.  **Route to Department:** Determine the single most appropriate department to handle the ticket based on the rules below.\n4.  **Provide JSON Output:** Structure your entire response as a single JSON object, containing the department ID and the list of clarification questions. **Do not** add any text outside of the JSON object.\n\n-----\n\n### **Department Routing**\n\nBased on the ticket's content, determine the single most appropriate department to handle the request from the list below. Common keywords are provided to help you decide.\n\n  * **12 - Dispatching:** Field technician requests, on-site hardware repair, physical equipment delivery.\n  * **4 - Technik/Support (Advanced Support):** (Complex) technical problems, server issues, network outages, escalations from 1st Level.\n  * **6 - Verkauf/Vetrieb (Sales):** CRM issues, sales pipeline questions, customer account setup for sales.\n\nReturn **ONLY the numeric ID** for the chosen department in the `department_id` field.\n\nPlease respond in the language used by the customer, which is mostly german."
+          "systemPromptTemplate": "=You are an expert IT support ticket analyst and dispatcher. Your task is to analyze the support ticket provided by the user, classify it, route it to the correct department, and formulate precise questions to gather any missing information.\n\n-----\n\n### **Instructions**\n\n1.  **Analyze the Ticket:** Carefully review the ticket content and any attached document summaries. If the ticket content is empty, the content can be found in inbound Mails. Treat inbound mails as ticket content \n2.  **Formulate Clarification Questions:** Based on your analysis, identify what information is missing to fully resolve the issue. Create a list of detailed and specific questions for the customer. The goal of these questions is to gather all necessary information so that a solution can be proposed immediately upon receiving the customer's response. Limit the questions to the most critical and impactful ones.\n3.  **Route to Department:** Determine the single most appropriate department to handle the ticket based on the rules below.\n4.  **Provide JSON Output:** Structure your entire response as a single JSON object, containing the department ID and the list of clarification questions. **Do not** add any text outside of the JSON object.\n\n-----\n\n### **Department Routing**\n\nBased on the ticket's content, determine the single most appropriate department to handle the request from the list below. Common keywords are provided to help you decide.\n\n  * **12 - Dispatching:** Field technician requests, on-site hardware repair, physical equipment delivery.\n  * **4 - Technik/Support (Advanced Support):** (Complex) technical problems, server issues, network outages, escalations from 1st Level.\n  * **6 - Verkauf/Vetrieb (Sales):** CRM issues, sales pipeline questions, customer account setup for sales.\n\nReturn **ONLY the numeric ID** for the chosen department in the `department_id` field.\n\nPlease respond in the language used by the customer, which is mostly german."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.informationExtractor",
@@ -354,18 +256,6 @@
       "position": [320, 576],
       "id": "ef809057-586a-4a85-985f-5794d8f8d343",
       "name": "Merge Mail and Attachments"
-    },
-    {
-      "parameters": {
-        "mode": "combine",
-        "combineBy": "combineAll",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.merge",
-      "typeVersion": 3.2,
-      "position": [144, 320],
-      "id": "ed3b4418-a5fc-4c2a-ac17-e95f2b247f68",
-      "name": "Merge Attachments"
     },
     {
       "parameters": {
@@ -512,7 +402,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
-      "position": [992, 1200],
+      "position": [992, 1136],
       "id": "6939b307-c8db-4763-a593-c59c4cc33cf9",
       "name": "mistral-medium-latest",
       "credentials": {
@@ -605,10 +495,56 @@
         "color": 2
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [688, 688],
+      "position": [688, 640],
       "typeVersion": 1,
       "id": "96e53138-6e82-4cfb-b59f-2e1743071668",
       "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PRtlgMd5w7PA0yvG",
+          "mode": "list",
+          "cachedResultName": "sub_tanss_attachments"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "numberOfDocuments": "={{ $json.numberOfDocuments }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            },
+            {
+              "id": "numberOfDocuments",
+              "displayName": "numberOfDocuments",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number"
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [-80, 416],
+      "id": "e225d575-f497-4fce-acd1-255dabc838c2",
+      "name": "Execute Attachment Workflow"
     }
   ],
   "connections": {
@@ -649,22 +585,17 @@
       "main": [
         [
           {
-            "node": "Execute Image Workflow",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Execute Document Workflow",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Merge with Ticketdata",
             "type": "main",
             "index": 1
           },
           {
             "node": "Execute Mail Workflow",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Execute Attachment Workflow",
             "type": "main",
             "index": 0
           }
@@ -683,28 +614,6 @@
         [
           {
             "node": "Get all last hours Tickets",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Document Workflow": {
-      "main": [
-        [
-          {
-            "node": "Merge Attachments",
-            "type": "main",
-            "index": 1
-          }
-        ]
-      ]
-    },
-    "Execute Image Workflow": {
-      "main": [
-        [
-          {
-            "node": "Merge Attachments",
             "type": "main",
             "index": 0
           }
@@ -750,17 +659,6 @@
         [
           {
             "node": "Merge with Ticketdata",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Merge Attachments": {
-      "main": [
-        [
-          {
-            "node": "Merge Mail and Attachments",
             "type": "main",
             "index": 0
           }
@@ -864,6 +762,17 @@
         [
           {
             "node": "Draft Ticket Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Attachment Workflow": {
+      "main": [
+        [
+          {
+            "node": "Merge Mail and Attachments",
             "type": "main",
             "index": 0
           }
@@ -1282,26 +1191,6 @@
         "expire": "2025-08-13T11:37:28.000-04:00"
       }
     ],
-    "Execute Document Workflow": [
-      {
-        "id": 97092,
-        "numberOfDocuments": 0
-      }
-    ],
-    "Execute Image Workflow": [
-      {
-        "images": [
-          {
-            "fileName": "Task-Manager.png",
-            "imageSummary": "The image shows the Task Manager window with various applications listed and their respective CPU, memory, and network usage. The applications include Autodesk Revit, Revit5, Microsoft OneDrive, Microsoft Edge, Microsoft Teams, Sophos Endpoint Defense, Windows-Widgets, and others. The CPU usage ranges from 0% to 4.8%, memory usage from 175.8 MB to 2,061.9 MB, and network usage is minimal or zero for most applications."
-          },
-          {
-            "fileName": "Task-Manager.png",
-            "imageSummary": "The image shows the Task Manager on a Windows operating system. Key details include: CPU usage at 8%, memory usage at 45% (28.7/63.6 GB), SSD temperature at 2% (NVMe), Ethernet speed at 16.0 KBit/s, GPU 0 usage at 15% (NVIDIA RTX A4000) with a temperature of 36°C, and GPU 1 usage at 0%. The system has a total of 64.0 GB of memory with 63.6 GB available. In the performance section, 28.4 GB (116 MB) is in use, and 34.9 GB is available. The cache is at 31.8/67.6 GB, and 31.7 GB is available. The system uses 4400 MHz memory with 2 of 4 slots in use and 376 MB of hardware reserved. The available memory pool is 1.5 GB, and the non-available memory pool is 1.4 GB."
-          }
-        ]
-      }
-    ],
     "Execute Mail Workflow": [
       {
         "inboundMails": [
@@ -1336,22 +1225,6 @@
           }
         ],
         "outboundMails": []
-      }
-    ],
-    "Merge Attachments": [
-      {
-        "images": [
-          {
-            "fileName": "Task-Manager.png",
-            "imageSummary": "The image shows the Task Manager window with various applications listed and their respective CPU, memory, and network usage. The applications include Autodesk Revit, Revit5, Microsoft OneDrive, Microsoft Edge, Microsoft Teams, Sophos Endpoint Defense, Windows-Widgets, and others. The CPU usage ranges from 0% to 4.8%, memory usage from 175.8 MB to 2,061.9 MB, and network usage is minimal or zero for most applications."
-          },
-          {
-            "fileName": "Task-Manager.png",
-            "imageSummary": "The image shows the Task Manager on a Windows operating system. Key details include: CPU usage at 8%, memory usage at 45% (28.7/63.6 GB), SSD temperature at 2% (NVMe), Ethernet speed at 16.0 KBit/s, GPU 0 usage at 15% (NVIDIA RTX A4000) with a temperature of 36°C, and GPU 1 usage at 0%. The system has a total of 64.0 GB of memory with 63.6 GB available. In the performance section, 28.4 GB (116 MB) is in use, and 34.9 GB is available. The cache is at 31.8/67.6 GB, and 31.7 GB is available. The system uses 4400 MHz memory with 2 of 4 slots in use and 376 MB of hardware reserved. The available memory pool is 1.5 GB, and the non-available memory pool is 1.4 GB."
-          }
-        ],
-        "id": 97092,
-        "numberOfDocuments": 0
       }
     ],
     "Merge with Ticketdata": [
