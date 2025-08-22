@@ -79,7 +79,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [1056, 608],
+      "position": [2448, 352],
       "id": "81f4d3b6-43ae-425a-bdd7-c66b423fc906",
       "name": "Add a comment with classification",
       "credentials": {
@@ -158,7 +158,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2544, 608],
+      "position": [2656, 672],
       "id": "ef6b4396-42fd-437d-b836-9b2d406ab8bf",
       "name": "Update Ticket",
       "credentials": {
@@ -395,7 +395,7 @@
       },
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
-      "position": [1376, 848],
+      "position": [1232, 848],
       "id": "5622b9d5-3cb1-47ac-a182-c70c5b9546ec",
       "name": "Draft Ticket Response"
     },
@@ -421,7 +421,7 @@
       },
       "type": "n8n-nodes-base.microsoftTeams",
       "typeVersion": 2,
-      "position": [1952, 848],
+      "position": [1552, 848],
       "id": "80d2ae08-9e2c-434a-9951-7a1f3d59a67f",
       "name": "create message and wait for reply",
       "webhookId": "56c699bb-03b2-481a-8bc9-446e017c34e8",
@@ -439,7 +439,7 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [2160, 848],
+      "position": [1760, 848],
       "id": "7d370a9d-4513-4d42-9900-9d11d8d15522",
       "name": "Wait",
       "webhookId": "e562d054-1f81-498b-97c8-c62629dd0d45"
@@ -459,7 +459,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2544, 1040],
+      "position": [2112, 608],
       "id": "612b0ec0-9c22-4719-911f-c0f9771de7ba",
       "name": "Get updated Teams message",
       "credentials": {
@@ -476,7 +476,7 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2752, 1040],
+      "position": [2288, 608],
       "id": "0c4b3bd8-d21a-458f-b1bd-5c070acd5c1c",
       "name": "Extract updated draft"
     },
@@ -493,7 +493,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2960, 1040],
+      "position": [2656, 496],
       "id": "b8023e1b-c3df-4419-a7d8-f5a3b2c96930",
       "name": "Post approved reply to TANSS",
       "credentials": {
@@ -548,25 +548,9 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [2352, 848],
+      "position": [1952, 848],
       "id": "f77d11cd-c928-4403-905b-03174b99bd71",
       "name": "send?"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [2736, 688],
-      "id": "cf235ec8-6bb1-4ff4-9704-070c6cc9c2f1",
-      "name": "No Operation, do nothing1"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [2736, 848],
-      "id": "56cfc840-39e5-40a6-838b-97185b9b64bb",
-      "name": "No Operation, do nothing2"
     },
     {
       "parameters": {
@@ -575,9 +559,56 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1056, 912],
+      "position": [1008, 912],
       "id": "44eb6abd-063f-4a8c-9abf-b7cde2d9622e",
       "name": "fix model output"
+    },
+    {
+      "parameters": {
+        "content": "### ONLY ATTACH IN PROD",
+        "height": 400,
+        "width": 208,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [2608, 432],
+      "typeVersion": 1,
+      "id": "a8766632-699e-4a38-9142-34714336353a",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [2192, 864],
+      "id": "56cfc840-39e5-40a6-838b-97185b9b64bb",
+      "name": "End"
+    },
+    {
+      "parameters": {
+        "content": "## TANSS Manipulation\nThese Nodes are responsible for making edits to the original TANSS Tickets",
+        "height": 608,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [2400, 240],
+      "typeVersion": 1,
+      "id": "28254512-3995-4ed5-be01-03d1416b918c",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## AI Stack\n*  Ticket Classification \n*  Response Automation ",
+        "height": 656,
+        "width": 784,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [688, 688],
+      "typeVersion": 1,
+      "id": "96e53138-6e82-4cfb-b59f-2e1743071668",
+      "name": "Sticky Note4"
     }
   ],
   "connections": {
@@ -814,11 +845,6 @@
       "main": [
         [
           {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
-          },
-          {
             "node": "Get updated Teams message",
             "type": "main",
             "index": 0
@@ -826,7 +852,7 @@
         ],
         [
           {
-            "node": "No Operation, do nothing2",
+            "node": "End",
             "type": "main",
             "index": 0
           }
