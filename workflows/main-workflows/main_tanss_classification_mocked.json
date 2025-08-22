@@ -183,7 +183,7 @@
     {
       "parameters": {
         "content": "## Sub-Workflows",
-        "height": 416,
+        "height": 272,
         "color": 2
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -210,50 +210,13 @@
     },
     {
       "parameters": {
-        "workflowId": {
-          "__rl": true,
-          "value": "FCTqIrPU9YlQoUTV",
-          "mode": "list",
-          "cachedResultName": "sub_tanss_mails"
-        },
-        "workflowInputs": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "ticketId": "={{ $json.id }}"
-          },
-          "matchingColumns": ["ticketId"],
-          "schema": [
-            {
-              "id": "ticketId",
-              "displayName": "ticketId",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "canBeUsedToMatch": true,
-              "type": "number",
-              "removed": false
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": true
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.executeWorkflow",
-      "typeVersion": 1.2,
-      "position": [-80, 592],
-      "id": "22120687-1c4c-47a5-95ed-9ae443afdfcf",
-      "name": "Execute Mail Workflow"
-    },
-    {
-      "parameters": {
         "mode": "combine",
         "combineBy": "combineAll",
         "options": {}
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [320, 576],
+      "position": [320, 624],
       "id": "ef809057-586a-4a85-985f-5794d8f8d343",
       "name": "Merge Mail and Attachments"
     },
@@ -545,6 +508,46 @@
       "position": [-80, 416],
       "id": "e225d575-f497-4fce-acd1-255dabc838c2",
       "name": "Execute Attachment Workflow"
+    },
+    {
+      "parameters": {
+        "url": "=https://helpdesk.team-it-group.de/backend/api/v1/tickets/history/{{ $json.id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-192, 640],
+      "id": "4ebb1c13-0c3e-44f4-954c-28ac49feb16e",
+      "name": "Get Ticket History",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the input data from the previous node.\nconst inputData = $input.first().json;\n\n// Initialize arrays to hold the categorized emails.\nconst inboundMails = [];\nconst outboundMails = [];\n\n// Ensure the 'mails' array exists before processing.\nif (inputData.content && Array.isArray(inputData.content.mails)) {\n  // Loop through each mail object in the input array.\n  for (const mail of inputData.content.mails) {\n    // Create a new, simplified object with only the required fields.\n    const simplifiedMail = {\n      senderName: mail.senderName,\n      subject: mail.subject,\n      bodyPlain: mail.bodyPlain,\n    };\n\n    // Check the 'inbound' property to categorize the mail.\n    if (mail.inbound === true) {\n      inboundMails.push(simplifiedMail);\n    } else {\n      outboundMails.push(simplifiedMail);\n    }\n  }\n}\n\n// Prepare the final output object.\nconst output = {\n  inboundMails,\n  outboundMails,\n};\n\n// Return the structured data for the next node in the workflow.\n// n8n expects an array of items, each with a 'json' property.\nreturn [{\n  json: output\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [16, 640],
+      "id": "b3c12814-dbe8-4bce-95ab-b660ee8aa859",
+      "name": "Restructure Mail Data"
+    },
+    {
+      "parameters": {
+        "content": "## Mails\n",
+        "width": 464
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [-272, 624],
+      "typeVersion": 1,
+      "id": "3dfb5128-de0d-4219-af97-cd7382adfa6a",
+      "name": "Sticky Note5"
     }
   ],
   "connections": {
@@ -590,12 +593,12 @@
             "index": 1
           },
           {
-            "node": "Execute Mail Workflow",
+            "node": "Execute Attachment Workflow",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Execute Attachment Workflow",
+            "node": "Get Ticket History",
             "type": "main",
             "index": 0
           }
@@ -639,17 +642,6 @@
             "node": "fix model output",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Execute Mail Workflow": {
-      "main": [
-        [
-          {
-            "node": "Merge Mail and Attachments",
-            "type": "main",
-            "index": 1
           }
         ]
       ]
@@ -775,6 +767,28 @@
             "node": "Merge Mail and Attachments",
             "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Ticket History": {
+      "main": [
+        [
+          {
+            "node": "Restructure Mail Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Restructure Mail Data": {
+      "main": [
+        [
+          {
+            "node": "Merge Mail and Attachments",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
@@ -1189,18 +1203,6 @@
       {
         "apiKey": "Bearer eyJraWQiOiJ4NXB1NDEiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MzcxIiwiZXhwIjoxNzU1MDk5NDQ4LCJ0eXBlIjoiQUNDRVNTIn0.uMN4gH5sLCHwgIlSRPMIXTSr7fgOM-AzzZ2wesnv2si8BrDvBrPH_RgLQR46rvTgz-GYsX0A5mqt3h5TKCXSUf1fIANZGFLS8bA6pWjV_XW1Zu2kylTznq_TMHiCfCkS3_LdZiRnAsk_AA1eGOwF_7Di2T5phQExnWemolKrozE",
         "expire": "2025-08-13T11:37:28.000-04:00"
-      }
-    ],
-    "Execute Mail Workflow": [
-      {
-        "inboundMails": [
-          {
-            "senderName": "noreply@rmmservice.com",
-            "subject": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
-            "bodyPlain": "New support request from \nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition \nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek\n"
-          }
-        ],
-        "outboundMails": []
       }
     ],
     "Merge Mail and Attachments": [
