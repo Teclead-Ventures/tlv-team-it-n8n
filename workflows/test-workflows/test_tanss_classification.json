@@ -14,7 +14,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-1488, 832],
-      "id": "935cfe5a-feff-4426-b96e-8a3d283196be",
+      "id": "30a5e1b3-b8d0-449c-826b-a4995da380df",
       "name": "Schedule Trigger"
     },
     {
@@ -22,7 +22,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [-80, 1040],
-      "id": "b0a66e1d-f85d-48b3-84c8-e0edd80e3091",
+      "id": "feba2db1-1ca9-4295-ae9c-363aeb83318b",
       "name": "No Operation, do nothing"
     },
     {
@@ -33,7 +33,7 @@
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
       "position": [-800, 832],
-      "id": "2c6902c5-1b21-42ce-a8a3-b0c8d2296161",
+      "id": "3f1d8e26-3b5c-4bb2-9068-079a3b4851ab",
       "name": "Split Out"
     },
     {
@@ -57,7 +57,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-1040, 832],
-      "id": "82715467-cc8a-469e-882e-b213c3a7897b",
+      "id": "2c21e93d-c4f8-4471-85f9-bd8f31e72ef1",
       "name": "Get all last hours Tickets",
       "credentials": {
         "httpHeaderAuth": {
@@ -80,7 +80,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2448, 352],
-      "id": "81f4d3b6-43ae-425a-bdd7-c66b423fc906",
+      "id": "9887ba6b-34c6-4dbf-8434-99bb0d3c41a7",
       "name": "Add a comment with classification",
       "credentials": {
         "httpHeaderAuth": {
@@ -116,7 +116,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [-592, 832],
-      "id": "2f35858d-039e-49c7-9949-f02c352e4cdd",
+      "id": "3f91526a-4758-46a6-af4f-5433d8f1d95f",
       "name": "If not already classified"
     },
     {
@@ -142,7 +142,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [-1264, 832],
-      "id": "208b8037-ad2f-424b-b9d8-11e60a197766",
+      "id": "b88e5d75-0749-4993-bcbb-960c0af8448a",
       "name": "Get API Key"
     },
     {
@@ -159,7 +159,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2656, 672],
-      "id": "ef6b4396-42fd-437d-b836-9b2d406ab8bf",
+      "id": "ccd9d283-0a2c-424b-ae38-80124f3ff513",
       "name": "Update Ticket",
       "credentials": {
         "httpHeaderAuth": {
@@ -177,7 +177,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [-1536, 688],
       "typeVersion": 1,
-      "id": "b1f8952a-0e21-4ecf-9ae4-744034840fdf",
+      "id": "5b368bd2-2f71-4fd5-8a12-994e739acd53",
       "name": "Sticky Note"
     },
     {
@@ -189,7 +189,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [-160, 336],
       "typeVersion": 1,
-      "id": "b198715f-8ad9-4b19-a851-0306199c54d6",
+      "id": "03b1bb4e-a9a1-432f-91e6-2f72b8678f78",
       "name": "Sticky Note2"
     },
     {
@@ -204,7 +204,7 @@
       "type": "@n8n/n8n-nodes-langchain.informationExtractor",
       "typeVersion": 1.2,
       "position": [704, 800],
-      "id": "7f2f4ad6-0110-4a9e-90d7-e2694ca198c3",
+      "id": "5868b7d3-1da5-482b-b060-aeca360e6d2c",
       "name": "Ticket Information Extractor",
       "onError": "continueErrorOutput"
     },
@@ -217,7 +217,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [320, 624],
-      "id": "ef809057-586a-4a85-985f-5794d8f8d343",
+      "id": "fcf5f91b-1cc4-4c23-9a30-014a76f8dead",
       "name": "Merge Mail and Attachments"
     },
     {
@@ -229,7 +229,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [512, 800],
-      "id": "f3d611d2-a62c-429f-a2f9-76142d3a4231",
+      "id": "bbd9e47b-1639-4129-8549-ae7465e4a302",
       "name": "Merge with Ticketdata"
     },
     {
@@ -249,7 +249,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.7,
       "position": [1232, 848],
-      "id": "5622b9d5-3cb1-47ac-a182-c70c5b9546ec",
+      "id": "a89dc5d8-f340-4fe5-8b6f-d0e0229bd722",
       "name": "Draft Ticket Response"
     },
     {
@@ -275,9 +275,9 @@
       "type": "n8n-nodes-base.microsoftTeams",
       "typeVersion": 2,
       "position": [1552, 848],
-      "id": "80d2ae08-9e2c-434a-9951-7a1f3d59a67f",
+      "id": "17e4f9b9-6762-4053-8f8f-21ed56164bb1",
       "name": "create message and wait for reply",
-      "webhookId": "56c699bb-03b2-481a-8bc9-446e017c34e8",
+      "webhookId": "c8bd0946-be13-47ea-b64e-4eb0d1eef0b6",
       "credentials": {
         "microsoftTeamsOAuth2Api": {
           "id": "JfBX4Cn1M8SQBnFV",
@@ -293,9 +293,9 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [1760, 848],
-      "id": "7d370a9d-4513-4d42-9900-9d11d8d15522",
+      "id": "d5183590-9107-44af-827d-2dad1c200ece",
       "name": "Wait",
-      "webhookId": "e562d054-1f81-498b-97c8-c62629dd0d45"
+      "webhookId": "bc537171-b22b-4d91-a10f-1379ef045532"
     },
     {
       "parameters": {
@@ -313,7 +313,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2112, 608],
-      "id": "612b0ec0-9c22-4719-911f-c0f9771de7ba",
+      "id": "f4e8f083-3da5-4bbf-80fd-7c103757ee0f",
       "name": "Get updated Teams message",
       "credentials": {
         "microsoftTeamsOAuth2Api": {
@@ -330,7 +330,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [2288, 608],
-      "id": "0c4b3bd8-d21a-458f-b1bd-5c070acd5c1c",
+      "id": "56280ac9-a1ce-49b5-a32e-b5245669849e",
       "name": "Extract updated draft"
     },
     {
@@ -347,7 +347,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [2656, 496],
-      "id": "b8023e1b-c3df-4419-a7d8-f5a3b2c96930",
+      "id": "a11e915c-9fd9-4009-a382-139fda65a92c",
       "name": "Post approved reply to TANSS",
       "credentials": {
         "httpHeaderAuth": {
@@ -366,7 +366,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
       "position": [992, 1136],
-      "id": "6939b307-c8db-4763-a593-c59c4cc33cf9",
+      "id": "853c762d-567c-4b81-a5cc-0f99b198fb57",
       "name": "mistral-medium-latest",
       "credentials": {
         "mistralCloudApi": {
@@ -402,7 +402,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1952, 848],
-      "id": "f77d11cd-c928-4403-905b-03174b99bd71",
+      "id": "25b4af10-536f-4e0d-bb56-45713f34435a",
       "name": "send?"
     },
     {
@@ -413,7 +413,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1008, 912],
-      "id": "44eb6abd-063f-4a8c-9abf-b7cde2d9622e",
+      "id": "00f078aa-d8d3-4d30-bcf1-2d6774726267",
       "name": "fix model output"
     },
     {
@@ -426,7 +426,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [2608, 432],
       "typeVersion": 1,
-      "id": "a8766632-699e-4a38-9142-34714336353a",
+      "id": "4d708c25-8602-4009-93e2-39d38b652bd5",
       "name": "Sticky Note3"
     },
     {
@@ -434,7 +434,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [2192, 864],
-      "id": "56cfc840-39e5-40a6-838b-97185b9b64bb",
+      "id": "de3eb2dd-2312-42e3-88f5-c780102c4296",
       "name": "End"
     },
     {
@@ -447,7 +447,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [2400, 240],
       "typeVersion": 1,
-      "id": "28254512-3995-4ed5-be01-03d1416b918c",
+      "id": "d111d8d3-6d82-4593-84f2-3ddf5181c7cd",
       "name": "Sticky Note1"
     },
     {
@@ -460,7 +460,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [688, 640],
       "typeVersion": 1,
-      "id": "96e53138-6e82-4cfb-b59f-2e1743071668",
+      "id": "c45c7368-20de-48c7-a962-a60f3900e28a",
       "name": "Sticky Note4"
     },
     {
@@ -506,7 +506,7 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
       "position": [-80, 416],
-      "id": "e225d575-f497-4fce-acd1-255dabc838c2",
+      "id": "ddb3d48a-eb49-443e-b4eb-db2951823c1b",
       "name": "Execute Attachment Workflow"
     },
     {
@@ -519,7 +519,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [-192, 640],
-      "id": "4ebb1c13-0c3e-44f4-954c-28ac49feb16e",
+      "id": "3b974c99-d17b-419e-a98c-9702274aa784",
       "name": "Get Ticket History",
       "credentials": {
         "httpHeaderAuth": {
@@ -535,7 +535,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [16, 640],
-      "id": "b3c12814-dbe8-4bce-95ab-b660ee8aa859",
+      "id": "7535578f-0a45-45b7-a491-6d7de398f8cf",
       "name": "Restructure Mail Data"
     },
     {
@@ -547,7 +547,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [-272, 624],
       "typeVersion": 1,
-      "id": "3dfb5128-de0d-4219-af97-cd7382adfa6a",
+      "id": "0795245f-f637-4f3a-b5c3-b71504e34e33",
       "name": "Sticky Note5"
     },
     {
@@ -559,7 +559,7 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [-1104, 688],
       "typeVersion": 1,
-      "id": "ef4bc50f-09f5-4e41-8c4c-e9e4b4aa93a9",
+      "id": "c26bb36e-1f02-4db7-98dd-4a0d184710f9",
       "name": "Sticky Note6"
     },
     {
@@ -572,8 +572,38 @@
       "type": "n8n-nodes-base.stickyNote",
       "position": [1472, 576],
       "typeVersion": 1,
-      "id": "15e0a62f-0c8e-45d2-aa47-43242d4e2509",
+      "id": "544547d2-7ddb-45ed-b0fc-34390fdab6c3",
       "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "https://helpdesk.team-it-group.de/backend/api/v1/tickets",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"ids\": []\n}",
+        "options": {
+          "response": {
+            "response": {
+              "neverError": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-1040, 1024],
+      "id": "ff1d846c-5f63-4dcb-afbd-2f6bfcba016c",
+      "name": "Get Tickets with IDs",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "O7ih4vhlXtdpFYEv",
+          "name": "Header Auth account"
+        }
+      }
     }
   ],
   "connections": {
@@ -600,15 +630,7 @@
       ]
     },
     "Get all last hours Tickets": {
-      "main": [
-        [
-          {
-            "node": "Split Out",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
+      "main": [[]]
     },
     "If not already classified": {
       "main": [
@@ -642,7 +664,7 @@
       "main": [
         [
           {
-            "node": "Get all last hours Tickets",
+            "node": "Get Tickets with IDs",
             "type": "main",
             "index": 0
           }
@@ -652,11 +674,6 @@
     "Ticket Information Extractor": {
       "main": [
         [
-          {
-            "node": "Add a comment with classification",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Draft Ticket Response",
             "type": "main",
@@ -818,106 +835,20 @@
           }
         ]
       ]
+    },
+    "Get Tickets with IDs": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "pinData": {
-    "Split Out": [
-      {
-        "id": 97092,
-        "companyId": 7,
-        "remitterId": 0,
-        "title": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
-        "content": "\nNew support request from\nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition\nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek",
-        "creationDate": 1755076066,
-        "assignedToEmployeeId": 0,
-        "assignedToDepartmentId": 0,
-        "statusId": 1,
-        "linkTypeId": 0,
-        "linkId": 0,
-        "deadlineDate": 0,
-        "project": false,
-        "projectId": 0,
-        "createdEmployeeId": 8371,
-        "typeId": 3,
-        "priority": 5,
-        "repair": false,
-        "reminder": 0,
-        "reactionHours": 0,
-        "dueDate": 1755090376,
-        "accesories": "",
-        "attention": "YES",
-        "orderById": 0,
-        "locked": false,
-        "relationshipLinkTypeId": 0,
-        "relationshipLinkId": 0,
-        "internalContent": "",
-        "resubmissionDate": 0,
-        "resubmissionText": "",
-        "phaseId": 0,
-        "estimatedMinutes": 0,
-        "localTicketAdminFlag": "NONE",
-        "localTicketAdminEmployeeId": 0,
-        "contractId": 0,
-        "lastStateChangeDate": 0,
-        "lastStateChangeEmployeeId": 0,
-        "modifiedBy": 0,
-        "modifiedTime": 0,
-        "numberOfDocuments": 0,
-        "chats": [],
-        "tags": [
-          {
-            "id": 78,
-            "name": "Ticket ohne Reaktion",
-            "backgroundColor": "#f78dee",
-            "fontColor": "#111212",
-            "description": "",
-            "image": "",
-            "groupTagId": 42,
-            "groupTagInheritance": true,
-            "unique": false,
-            "active": true,
-            "statistic": false,
-            "visibilities": [
-              {
-                "tagId": 42,
-                "linkTypeId": 34,
-                "linkId": 4,
-                "extras": {}
-              }
-            ],
-            "deleteAccess": [],
-            "isGroupParent": false,
-            "groupTag": {
-              "id": 42,
-              "name": "Support / Technik",
-              "backgroundColor": "#06c6c6",
-              "fontColor": "#000000",
-              "description": "",
-              "image": "",
-              "groupTagId": 0,
-              "groupTagInheritance": true,
-              "unique": false,
-              "active": true,
-              "statistic": false,
-              "visibilities": [
-                {
-                  "tagId": 42,
-                  "linkTypeId": 34,
-                  "linkId": 4,
-                  "extras": {}
-                }
-              ],
-              "deleteAccess": [],
-              "isGroupParent": false,
-              "isFavorite": false,
-              "mayRemove": true
-            },
-            "isFavorite": false,
-            "mayRemove": true
-          }
-        ]
-      }
-    ],
     "Get all last hours Tickets": [
       {
         "meta": {
@@ -1069,305 +1000,10 @@
         ]
       }
     ],
-    "Add a comment with classification": [
-      {
-        "meta": {
-          "text": "Object successfully created",
-          "linkedEntities": {
-            "companies": {},
-            "tickets": {},
-            "ticketStates": {
-              "1000": {
-                "image": "icon16px-10-erledigt.png",
-                "name": "erledigt",
-                "rank": 1000
-              }
-            },
-            "ticketTypes": {},
-            "departments": {
-              "4": {
-                "name": "Technik/Support"
-              }
-            },
-            "employees": {
-              "2": {
-                "initials": "TL",
-                "name": "Lapp, Teuta",
-                "email": "T.Lapp@team-it-group.de"
-              },
-              "3": {
-                "initials": "UW",
-                "name": "Wintjens, Ulrich",
-                "email": "u.wintjens@team-it-group.de"
-              },
-              "4": {
-                "initials": "RD",
-                "name": "Dunkel, Ralf",
-                "email": "r.dunkel@team-it-group.de"
-              },
-              "5": {
-                "initials": "DJ",
-                "name": "Jacobs, Dominik",
-                "email": "d.jacobs@team-it-group.de"
-              },
-              "6": {
-                "initials": "BK",
-                "name": "Kühnapfel, Britta",
-                "email": "b.kuehnapfel@team-it-group.de"
-              }
-            },
-            "contracts": {},
-            "phases": {},
-            "costCenters": {},
-            "tags": {
-              "2": {
-                "image": "",
-                "backgroundColor": "#000000",
-                "statistic": false,
-                "description": "",
-                "groupTagInheritance": true,
-                "active": true,
-                "deleteAccess": [],
-                "isGroupParent": false,
-                "groupTag": {
-                  "id": 42,
-                  "name": "Support / Technik",
-                  "backgroundColor": "#06c6c6",
-                  "fontColor": "#000000",
-                  "description": "",
-                  "image": "",
-                  "groupTagId": 0,
-                  "groupTagInheritance": true,
-                  "unique": false,
-                  "active": true,
-                  "statistic": false,
-                  "visibilities": [
-                    {
-                      "tagId": 42,
-                      "linkTypeId": 34,
-                      "linkId": 4,
-                      "extras": {}
-                    }
-                  ],
-                  "deleteAccess": [],
-                  "isGroupParent": false,
-                  "isFavorite": false,
-                  "mayRemove": true
-                },
-                "unique": false,
-                "name": "Daily",
-                "visibilities": [
-                  {
-                    "tagId": 42,
-                    "linkTypeId": 34,
-                    "linkId": 4,
-                    "extras": {}
-                  }
-                ],
-                "id": 2,
-                "groupTagId": 42,
-                "fontColor": "#ffffff",
-                "mayRemove": true
-              }
-            },
-            "orderBys": {}
-          },
-          "properties": {
-            "extras": {
-              "dueDateWarnings": {
-                "orange": {
-                  "warningTimeType": "HOURS_BEFORE",
-                  "warningTime": 2
-                },
-                "yellow": {
-                  "warningTimeType": "TODAY"
-                }
-              },
-              "notificationsSentTo": [],
-              "showTicketTitle": true,
-              "canSeeAssignedDepartment": true,
-              "waitingStates": [8],
-              "showTicketType": true,
-              "canSeeAssignedTechnician": true,
-              "doneIconName": "icon16px-10-erledigt.png",
-              "ticketTags": [],
-              "prefs": [
-                {
-                  "sectionId": 22,
-                  "assignmentId": 8371,
-                  "preferenceId": 11,
-                  "value": 0
-                },
-                {
-                  "sectionId": 22,
-                  "assignmentId": 8371,
-                  "preferenceId": 68,
-                  "value": 0
-                }
-              ]
-            }
-          }
-        },
-        "content": {
-          "id": 143370,
-          "date": 1755085079,
-          "type": "TICKET_COMMENT",
-          "employeeId": 8371,
-          "categoryId": 0,
-          "productId": 0,
-          "commentOfId": 97092,
-          "title": "Automatic AI Classification",
-          "content": "Summary: Der PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB, wodurch Prozesse häufig abstürzen oder ewig brauchen.\nCategory: Software\nProblem Location: KI236, Windows 11 Professional Edition\nCustomer Actions: Der Kunde hat bereits den Task-Manager überprüft und festgestellt, dass der PC nicht den gesamten verfügbaren Arbeitsspeicher nutzt.\nAttachment Summary: Zwei Screenshots des Task-Managers, die die CPU-, Speicher- und Netzwerknutzung verschiedener Anwendungen zeigen.\nAttachment Analysis: Die Screenshots zeigen, dass der PC nicht den gesamten verfügbaren Arbeitsspeicher nutzt, was möglicherweise auf eine Konfigurations- oder Software-Problematik hinweist.",
-          "toEmployeeId": 0,
-          "completedDate": 0,
-          "internal": false,
-          "path": []
-        }
-      }
-    ],
     "Get API Key": [
       {
         "apiKey": "Bearer eyJraWQiOiJ4NXB1NDEiLCJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MzcxIiwiZXhwIjoxNzU1MDk5NDQ4LCJ0eXBlIjoiQUNDRVNTIn0.uMN4gH5sLCHwgIlSRPMIXTSr7fgOM-AzzZ2wesnv2si8BrDvBrPH_RgLQR46rvTgz-GYsX0A5mqt3h5TKCXSUf1fIANZGFLS8bA6pWjV_XW1Zu2kylTznq_TMHiCfCkS3_LdZiRnAsk_AA1eGOwF_7Di2T5phQExnWemolKrozE",
         "expire": "2025-08-13T11:37:28.000-04:00"
-      }
-    ],
-    "Merge Mail and Attachments": [
-      {
-        "images": [
-          {
-            "fileName": "Task-Manager.png",
-            "imageSummary": "The image shows the Task Manager window with various applications listed and their respective CPU, memory, and network usage. The applications include Autodesk Revit, Revit5, Microsoft OneDrive, Microsoft Edge, Microsoft Teams, Sophos Endpoint Defense, Windows-Widgets, and others. The CPU usage ranges from 0% to 4.8%, memory usage from 175.8 MB to 2,061.9 MB, and network usage is minimal or zero for most applications."
-          },
-          {
-            "fileName": "Task-Manager.png",
-            "imageSummary": "The image shows the Task Manager on a Windows operating system. Key details include: CPU usage at 8%, memory usage at 45% (28.7/63.6 GB), SSD temperature at 2% (NVMe), Ethernet speed at 16.0 KBit/s, GPU 0 usage at 15% (NVIDIA RTX A4000) with a temperature of 36°C, and GPU 1 usage at 0%. The system has a total of 64.0 GB of memory with 63.6 GB available. In the performance section, 28.4 GB (116 MB) is in use, and 34.9 GB is available. The cache is at 31.8/67.6 GB, and 31.7 GB is available. The system uses 4400 MHz memory with 2 of 4 slots in use and 376 MB of hardware reserved. The available memory pool is 1.5 GB, and the non-available memory pool is 1.4 GB."
-          }
-        ],
-        "id": 97092,
-        "numberOfDocuments": 0,
-        "inboundMails": [
-          {
-            "senderName": "noreply@rmmservice.com",
-            "subject": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
-            "bodyPlain": "New support request from \nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition \nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek\n"
-          }
-        ],
-        "outboundMails": []
-      }
-    ],
-    "Merge with Ticketdata": [
-      {
-        "images": [
-          {
-            "fileName": "Task-Manager.png",
-            "imageSummary": "The image shows the Task Manager window with various applications listed and their respective CPU, memory, and network usage. The applications include Autodesk Revit, Revit5, Microsoft OneDrive, Microsoft Edge, Microsoft Teams, Sophos Endpoint Defense, Windows-Widgets, and others. The CPU usage ranges from 0% to 4.8%, memory usage from 175.8 MB to 2,061.9 MB, and network usage is minimal or zero for most applications."
-          },
-          {
-            "fileName": "Task-Manager.png",
-            "imageSummary": "The image shows the Task Manager on a Windows operating system. Key details include: CPU usage at 8%, memory usage at 45% (28.7/63.6 GB), SSD temperature at 2% (NVMe), Ethernet speed at 16.0 KBit/s, GPU 0 usage at 15% (NVIDIA RTX A4000) with a temperature of 36°C, and GPU 1 usage at 0%. The system has a total of 64.0 GB of memory with 63.6 GB available. In the performance section, 28.4 GB (116 MB) is in use, and 34.9 GB is available. The cache is at 31.8/67.6 GB, and 31.7 GB is available. The system uses 4400 MHz memory with 2 of 4 slots in use and 376 MB of hardware reserved. The available memory pool is 1.5 GB, and the non-available memory pool is 1.4 GB."
-          }
-        ],
-        "id": 97092,
-        "numberOfDocuments": 0,
-        "inboundMails": [
-          {
-            "senderName": "noreply@rmmservice.com",
-            "subject": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
-            "bodyPlain": "New support request from \nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition \nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek\n"
-          }
-        ],
-        "outboundMails": [],
-        "companyId": 7,
-        "remitterId": 0,
-        "title": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
-        "content": "\nNew support request from\nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition\nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek",
-        "creationDate": 1755076066,
-        "assignedToEmployeeId": 0,
-        "assignedToDepartmentId": 0,
-        "statusId": 1,
-        "linkTypeId": 0,
-        "linkId": 0,
-        "deadlineDate": 0,
-        "project": false,
-        "projectId": 0,
-        "createdEmployeeId": 8371,
-        "typeId": 3,
-        "priority": 5,
-        "repair": false,
-        "reminder": 0,
-        "reactionHours": 0,
-        "dueDate": 1755090376,
-        "accesories": "",
-        "attention": "YES",
-        "orderById": 0,
-        "locked": false,
-        "relationshipLinkTypeId": 0,
-        "relationshipLinkId": 0,
-        "internalContent": "",
-        "resubmissionDate": 0,
-        "resubmissionText": "",
-        "phaseId": 0,
-        "estimatedMinutes": 0,
-        "localTicketAdminFlag": "NONE",
-        "localTicketAdminEmployeeId": 0,
-        "contractId": 0,
-        "lastStateChangeDate": 0,
-        "lastStateChangeEmployeeId": 0,
-        "modifiedBy": 0,
-        "modifiedTime": 0,
-        "chats": [],
-        "tags": [
-          {
-            "id": 78,
-            "name": "Ticket ohne Reaktion",
-            "backgroundColor": "#f78dee",
-            "fontColor": "#111212",
-            "description": "",
-            "image": "",
-            "groupTagId": 42,
-            "groupTagInheritance": true,
-            "unique": false,
-            "active": true,
-            "statistic": false,
-            "visibilities": [
-              {
-                "tagId": 42,
-                "linkTypeId": 34,
-                "linkId": 4,
-                "extras": {}
-              }
-            ],
-            "deleteAccess": [],
-            "isGroupParent": false,
-            "groupTag": {
-              "id": 42,
-              "name": "Support / Technik",
-              "backgroundColor": "#06c6c6",
-              "fontColor": "#000000",
-              "description": "",
-              "image": "",
-              "groupTagId": 0,
-              "groupTagInheritance": true,
-              "unique": false,
-              "active": true,
-              "statistic": false,
-              "visibilities": [
-                {
-                  "tagId": 42,
-                  "linkTypeId": 34,
-                  "linkId": 4,
-                  "extras": {}
-                }
-              ],
-              "deleteAccess": [],
-              "isGroupParent": false,
-              "isFavorite": false,
-              "mayRemove": true
-            },
-            "isFavorite": false,
-            "mayRemove": true
-          }
-        ]
       }
     ]
   },
