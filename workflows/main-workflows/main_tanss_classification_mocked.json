@@ -13,16 +13,16 @@
       },
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
-      "position": [-1488, 832],
-      "id": "935cfe5a-feff-4426-b96e-8a3d283196be",
+      "position": [-192, -336],
+      "id": "72e9b1cf-aec0-4937-9e99-2cf0e75a0620",
       "name": "Schedule Trigger"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [-128, 1024],
-      "id": "b0a66e1d-f85d-48b3-84c8-e0edd80e3091",
+      "position": [1168, -144],
+      "id": "18db0865-f424-4182-8135-a6c48aa8663b",
       "name": "No Operation, do nothing"
     },
     {
@@ -32,8 +32,8 @@
       },
       "type": "n8n-nodes-base.splitOut",
       "typeVersion": 1,
-      "position": [-800, 832],
-      "id": "2c6902c5-1b21-42ce-a8a3-b0c8d2296161",
+      "position": [496, -336],
+      "id": "455cfbc4-d576-47a5-a7e7-ecbea454d9d4",
       "name": "Split Out"
     },
     {
@@ -56,8 +56,8 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-1040, 832],
-      "id": "82715467-cc8a-469e-882e-b213c3a7897b",
+      "position": [256, -336],
+      "id": "270f711c-12ba-4498-a755-a1f0fe270ca0",
       "name": "Get all last hours Tickets",
       "credentials": {
         "httpHeaderAuth": {
@@ -79,8 +79,8 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2448, 432],
-      "id": "81f4d3b6-43ae-425a-bdd7-c66b423fc906",
+      "position": [3728, -736],
+      "id": "46874cd1-2d8a-4b50-bb60-8f4311ed291c",
       "name": "Add a comment with classification",
       "credentials": {
         "httpHeaderAuth": {
@@ -115,8 +115,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [-592, 832],
-      "id": "2f35858d-039e-49c7-9949-f02c352e4cdd",
+      "position": [704, -336],
+      "id": "7b62abe1-3cf8-450c-bfaf-1c85267f3f76",
       "name": "If not already classified"
     },
     {
@@ -141,8 +141,8 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [-1264, 832],
-      "id": "208b8037-ad2f-424b-b9d8-11e60a197766",
+      "position": [32, -336],
+      "id": "2732d72a-d497-4666-8d20-69bbad120e09",
       "name": "Get API Key"
     },
     {
@@ -158,8 +158,8 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2656, 752],
-      "id": "ef6b4396-42fd-437d-b836-9b2d406ab8bf",
+      "position": [3952, -416],
+      "id": "602e9eea-f37f-4bb4-bc3a-f7847d577e97",
       "name": "Update Ticket",
       "credentials": {
         "httpHeaderAuth": {
@@ -170,26 +170,26 @@
     },
     {
       "parameters": {
-        "content": "## Todo's\n* When to trigger the flow?\n* Only new tickets?",
+        "content": "## Trigger & scope checklist\n- Confirm schedule cadence for PROD\n- Confirm fetch scope (company/time window)\n- Decide: only new vs modified tickets\n- Verify idempotency via `X-AUTO-CLASSIFIED` flag",
         "height": 304,
-        "width": 208
+        "width": 400
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [-1536, 688],
+      "position": [-432, -480],
       "typeVersion": 1,
-      "id": "b1f8952a-0e21-4ecf-9ae4-744034840fdf",
+      "id": "97355705-5663-44a7-94a6-5bbaf8cf04e7",
       "name": "Sticky Note"
     },
     {
       "parameters": {
-        "content": "## Sub-Workflows",
-        "height": 272,
+        "content": "## Sub-workflows\n- `sub_tanss_attachments`: fetches/analyses attachments; inputs: `id`, `numberOfDocuments`; outputs: `images[]`, `documents[]` summaries",
+        "height": 368,
         "color": 2
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [-160, 336],
+      "position": [1136, -928],
       "typeVersion": 1,
-      "id": "b198715f-8ad9-4b19-a851-0306199c54d6",
+      "id": "6fd337f7-e69d-4ce1-805a-6e1a8e385b7e",
       "name": "Sticky Note2"
     },
     {
@@ -203,8 +203,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.informationExtractor",
       "typeVersion": 1.2,
-      "position": [704, 800],
-      "id": "7f2f4ad6-0110-4a9e-90d7-e2694ca198c3",
+      "position": [2000, -368],
+      "id": "8f593a91-76dd-4871-afd6-f3421745c468",
       "name": "Ticket Information Extractor",
       "onError": "continueErrorOutput"
     },
@@ -216,8 +216,8 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [320, 624],
-      "id": "ef809057-586a-4a85-985f-5794d8f8d343",
+      "position": [1616, -544],
+      "id": "2b33e65b-97d5-4cc6-90be-1dcb220ebbe3",
       "name": "Merge Mail and Attachments"
     },
     {
@@ -228,8 +228,8 @@
       },
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
-      "position": [512, 800],
-      "id": "f3d611d2-a62c-429f-a2f9-76142d3a4231",
+      "position": [1808, -368],
+      "id": "e76da105-11a8-49d9-a13e-976edee8cb51",
       "name": "Merge with Ticketdata"
     },
     {
@@ -254,8 +254,8 @@
       },
       "type": "n8n-nodes-base.microsoftTeams",
       "typeVersion": 2,
-      "position": [1552, 848],
-      "id": "80d2ae08-9e2c-434a-9951-7a1f3d59a67f",
+      "position": [2848, -320],
+      "id": "f47b03bf-c9d6-4059-8284-29736c9b1e1b",
       "name": "create message and wait for reply",
       "webhookId": "56c699bb-03b2-481a-8bc9-446e017c34e8",
       "credentials": {
@@ -272,8 +272,8 @@
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
-      "position": [1760, 848],
-      "id": "7d370a9d-4513-4d42-9900-9d11d8d15522",
+      "position": [3056, -320],
+      "id": "72f0f157-03e9-422e-b02b-48fbaa7315f6",
       "name": "Wait",
       "webhookId": "e562d054-1f81-498b-97c8-c62629dd0d45"
     },
@@ -292,8 +292,8 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2112, 608],
-      "id": "612b0ec0-9c22-4719-911f-c0f9771de7ba",
+      "position": [3408, -560],
+      "id": "db57da0f-4095-47e5-809a-b0df24f1da83",
       "name": "Get updated Teams message",
       "credentials": {
         "microsoftTeamsOAuth2Api": {
@@ -309,8 +309,8 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [2288, 608],
-      "id": "0c4b3bd8-d21a-458f-b1bd-5c070acd5c1c",
+      "position": [3584, -560],
+      "id": "50079944-d02f-492e-9bdf-6a07ebb5877f",
       "name": "Extract updated draft"
     },
     {
@@ -326,8 +326,8 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2656, 576],
-      "id": "b8023e1b-c3df-4419-a7d8-f5a3b2c96930",
+      "position": [3952, -592],
+      "id": "e3da914b-3ef2-436a-85f7-bf9ba356fce5",
       "name": "Post approved reply to TANSS",
       "credentials": {
         "httpHeaderAuth": {
@@ -345,8 +345,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatMistralCloud",
       "typeVersion": 1,
-      "position": [992, 1136],
-      "id": "6939b307-c8db-4763-a593-c59c4cc33cf9",
+      "position": [2288, -32],
+      "id": "0ffc3690-9c81-4a35-859d-b6aded39a7a5",
       "name": "mistral-medium-latest",
       "credentials": {
         "mistralCloudApi": {
@@ -381,8 +381,8 @@
       },
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
-      "position": [1952, 848],
-      "id": "f77d11cd-c928-4403-905b-03174b99bd71",
+      "position": [3248, -320],
+      "id": "80d84d4a-0897-49ff-b8dd-a9ba451ace70",
       "name": "send?"
     },
     {
@@ -392,55 +392,55 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1008, 912],
-      "id": "44eb6abd-063f-4a8c-9abf-b7cde2d9622e",
+      "position": [2304, -256],
+      "id": "efa177ba-a96f-4bc2-aff6-45c52e986ebc",
       "name": "fix model output"
     },
     {
       "parameters": {
-        "content": "### ONLY ATTACH IN PROD",
-        "height": 400,
-        "width": 208,
+        "content": "## Production safety\nOnly execute write actions in production",
+        "height": 464,
+        "width": 192,
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [2608, 512],
+      "position": [3904, -736],
       "typeVersion": 1,
-      "id": "a8766632-699e-4a38-9142-34714336353a",
+      "id": "4f4427b2-adb1-405f-8f0d-e2d6029871bd",
       "name": "Sticky Note3"
     },
     {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [2192, 864],
-      "id": "56cfc840-39e5-40a6-838b-97185b9b64bb",
+      "position": [3488, -304],
+      "id": "663b5289-ca4e-463e-8ab1-bbb358dac088",
       "name": "End"
     },
     {
       "parameters": {
-        "content": "## TANSS Manipulation\nThese Nodes are responsible for making edits to the original TANSS Tickets",
-        "height": 880,
+        "content": "## TANSS Updates (write)\n- Add AI classification comment (internal)\n- Update Ticket: `priority`, `assignedToDepartmentId`, and flag `internalContent= X-AUTO-CLASSIFIED`\n- Post approved reply (public) after Teams approval\n- TODO: guard writes behind env/prod checks",
+        "height": 976,
         "width": 432,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [2400, 336],
+      "position": [3696, -928],
       "typeVersion": 1,
-      "id": "28254512-3995-4ed5-be01-03d1416b918c",
+      "id": "906abbac-ad5f-4e8e-a5ac-22d3faf7d807",
       "name": "Sticky Note1"
     },
     {
       "parameters": {
-        "content": "## AI Stack\n*  Ticket Classification \n*  Response Automation ",
-        "height": 1280,
+        "content": "## AI Stack\n- Model: Mistral `mistral-medium-latest`\n- Information Extractor: strict JSON schema; continues on error; `fix model output` cleans invalid JSON\n- Agent: crafts user-facing mail using extractor output + Knowledge Base\n- Outputs used for: TANSS comment, ticket updates, Teams draft",
+        "height": 1376,
         "width": 784,
         "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [688, 336],
+      "position": [1984, -928],
       "typeVersion": 1,
-      "id": "96e53138-6e82-4cfb-b59f-2e1743071668",
+      "id": "4c084d8a-f1e3-4a06-8563-3a13f15bf40c",
       "name": "Sticky Note4"
     },
     {
@@ -485,8 +485,8 @@
       },
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.2,
-      "position": [-80, 416],
-      "id": "e225d575-f497-4fce-acd1-255dabc838c2",
+      "position": [1216, -752],
+      "id": "b6b84853-a394-4cfb-b16c-99f84d8f215d",
       "name": "Execute Attachment Workflow"
     },
     {
@@ -498,8 +498,8 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [-192, 640],
-      "id": "4ebb1c13-0c3e-44f4-954c-28ac49feb16e",
+      "position": [1104, -496],
+      "id": "eb301efe-ab25-4eb9-b5c4-8a9d1960bd7f",
       "name": "Get Ticket History",
       "credentials": {
         "httpHeaderAuth": {
@@ -514,45 +514,46 @@
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [16, 640],
-      "id": "b3c12814-dbe8-4bce-95ab-b660ee8aa859",
+      "position": [1312, -496],
+      "id": "adac84fa-048f-4d6e-bdee-42e596c05b87",
       "name": "Restructure Mail Data"
     },
     {
       "parameters": {
-        "content": "## Mails\n",
-        "width": 464,
+        "content": "## Mail history processing\n",
+        "height": 176,
+        "width": 448,
         "color": 2
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [-272, 624],
+      "position": [1040, -544],
       "typeVersion": 1,
-      "id": "3dfb5128-de0d-4219-af97-cd7382adfa6a",
+      "id": "8ad70b70-253a-4b92-811e-3161989302f4",
       "name": "Sticky Note5"
     },
     {
       "parameters": {
-        "content": "## Todo's\n* Which Tickets should be fetched (company, employee, board)?\n* adapt \"company\" parameter",
-        "height": 304,
+        "content": "## Open decisions: TANSS search scope\n- Tickets to fetch: company/employee/board?\n- Adapt `companies` (current: [7])\n- Time window (current: 200 minutes)\n- Include only new/open? (`includeDoneTickets=false`)\n- Exclude already-classified via flag (in place)",
+        "height": 528,
         "width": 224
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [-1104, 688],
+      "position": [192, -704],
       "typeVersion": 1,
-      "id": "ef4bc50f-09f5-4e41-8c4c-e9e4b4aa93a9",
+      "id": "934f0e64-4054-4b51-bd9f-3a64f2c2d67f",
       "name": "Sticky Note6"
     },
     {
       "parameters": {
-        "content": "## \"Human in the Loop\" - Teams Flow",
-        "height": 880,
+        "content": "## Human-in-the-Loop: Teams\n- Posts preview to channel `ai-confirmations` with AI summary and draft\n- Wait (webhook) for: Approve, Reject, Request changes\n- Decision `send?`: checks `?send=true`\n- If approved: fetch message → extract <pre> → post public reply to TANSS\n- If rejected: end without changes",
+        "height": 976,
         "width": 928,
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [1472, 336],
+      "position": [2768, -928],
       "typeVersion": 1,
-      "id": "15e0a62f-0c8e-45d2-aa47-43242d4e2509",
+      "id": "75b50413-f2bd-4c8d-b2ad-c8b17b174665",
       "name": "Sticky Note7"
     },
     {
@@ -562,8 +563,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
-      "position": [432, 1488],
-      "id": "14dc070e-d6c5-479c-a7b3-befbc9f909a0",
+      "position": [1728, 320],
+      "id": "9c025071-b9fa-46ab-a918-f02161378cc3",
       "name": "Default Data Loader"
     },
     {
@@ -572,8 +573,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsMistralCloud",
       "typeVersion": 1,
-      "position": [992, 1376],
-      "id": "1aab3fcb-2651-4abf-bdf5-54329457494d",
+      "position": [2288, 208],
+      "id": "a0d7be9e-b6ee-44fd-a150-91cde0d78304",
       "name": "Embeddings Mistral Cloud",
       "credentials": {
         "mistralCloudApi": {
@@ -593,8 +594,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
-      "position": [384, 1264],
-      "id": "e37156cf-b78f-4264-89f0-3271e680dcd9",
+      "position": [1680, 96],
+      "id": "33454d7e-cd68-4d10-a997-1e6443c9a75d",
       "name": "Insert Data to Store"
     },
     {
@@ -613,8 +614,8 @@
       },
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.3,
-      "position": [128, 1264],
-      "id": "d8c3d084-6098-416c-a1d1-b67ac4d031bf",
+      "position": [1424, 96],
+      "id": "1ea0780d-6b72-4239-b59c-2f3f7e5a2a33",
       "name": "On form submission",
       "webhookId": "d11b1562-ea55-4878-a151-a52a9f30b2b6"
     },
@@ -630,8 +631,8 @@
       },
       "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
       "typeVersion": 1.3,
-      "position": [1200, 1136],
-      "id": "576b052f-fc7c-45a4-a50e-7b3ff84a3ab0",
+      "position": [2496, -32],
+      "id": "1195d2ad-bd97-4893-8f20-0f3e44162c13",
       "name": "Knowledge Base"
     },
     {
@@ -644,47 +645,47 @@
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
-      "position": [1200, 848],
-      "id": "af474b7a-837a-4ffc-9acf-de38d803894b",
+      "position": [2496, -320],
+      "id": "133ff893-448e-41f8-b9c7-d2ed30ace152",
       "name": "Ticket AI Agent"
     },
     {
       "parameters": {
-        "content": "## RAG System\nThis section is used to store Data in a Vector Store to make it available for the Ticket AI Agent",
+        "content": "## RAG System\n- Form: upload docs → Default Data Loader (binary)\n- Embeddings: Mistral → In-memory Vector Store (`vector_store_key`)\n- Retrieval: `Knowledge Base` exposed as tool to Ticket AI Agent\n- Purpose: ground questions/answers with company knowledge",
         "height": 624,
         "width": 608,
         "color": 7
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [80, 992],
+      "position": [1376, -176],
       "typeVersion": 1,
-      "id": "5bda4763-b1ac-4e38-a249-d20f8101c9da",
+      "id": "9196c5d4-9256-47eb-b089-6bab6852371f",
       "name": "Sticky Note8"
     },
     {
       "parameters": {
-        "content": "## TANSS Ticket Data Processing\n",
-        "height": 656,
+        "content": "## TANSS Ticket Data Processing\n1) Get API Key → Get last hours tickets\n2) Split Out: iterate items (from `content`)\n3) IF not already classified: gate on `internalContent`\n4) Parallel: attachments (sub-workflow) + ticket history → restructure mails\n5) Merge mail + attachments → merge with ticket data\n6) Ticket Information Extractor: returns `summary, category, department_id, priority, attachment_* , clarification_questions`\n7) TANSS updates: internal AI classification comment + update priority/department + set `internalContent= X-AUTO-CLASSIFIED`\n",
+        "height": 752,
         "width": 1792,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [-1104, 336],
+      "position": [192, -928],
       "typeVersion": 1,
-      "id": "b2f3bd6c-8d7f-4adc-a3e5-60f3799ce50c",
+      "id": "ef353387-1a62-4f26-831a-ae550a5b7cfd",
       "name": "Sticky Note9"
     },
     {
       "parameters": {
-        "content": "## Trigger and API Login\n",
-        "height": 656,
-        "width": 432,
+        "content": "## Trigger & API Login\n- Schedule: every 10s (dev). Set prod cadence.\n- Auth: sub-workflow `sub_tanss_login` issues TANSS API key; HTTP nodes use credential `Header Auth account` (httpHeaderAuth).\n- Fetch scope: PUT /tickets with `modifiedWithinTimeframe` (now-200m..now), `includeDoneTickets: false`, `companies: [7]`.\n- Idempotency: IF checks `internalContent` notContains `X-AUTO-CLASSIFIED` to avoid reprocessing.\n",
+        "height": 752,
+        "width": 624,
         "color": 7
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [-1536, 336],
+      "position": [-432, -928],
       "typeVersion": 1,
-      "id": "e50b0f38-6ea4-45a7-b63c-2a4a69b48152",
+      "id": "43f9ebe8-3674-478c-bffa-398e1ae4831f",
       "name": "Sticky Note10"
     }
   ],
@@ -838,9 +839,6 @@
           }
         ]
       ]
-    },
-    "Extract updated draft": {
-      "main": [[]]
     },
     "mistral-medium-latest": {
       "ai_languageModel": [
