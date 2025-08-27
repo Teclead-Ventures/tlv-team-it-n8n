@@ -21,7 +21,7 @@
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [-80, 1040],
+      "position": [-128, 1024],
       "id": "b0a66e1d-f85d-48b3-84c8-e0edd80e3091",
       "name": "No Operation, do nothing"
     },
@@ -79,7 +79,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2448, 352],
+      "position": [2448, 432],
       "id": "81f4d3b6-43ae-425a-bdd7-c66b423fc906",
       "name": "Add a comment with classification",
       "credentials": {
@@ -158,7 +158,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2656, 672],
+      "position": [2656, 752],
       "id": "ef6b4396-42fd-437d-b836-9b2d406ab8bf",
       "name": "Update Ticket",
       "credentials": {
@@ -234,26 +234,6 @@
     },
     {
       "parameters": {
-        "promptType": "define",
-        "text": "=Ticket Data:\n- Ticket Title: {{ $('Merge with Ticketdata').item.json.title }}\n- Ticket Content: {{ $('Merge with Ticketdata').item.json.content }}\n- Ticket Summary:  {{ $json.output.summary }}\n- Attachment Analysis: {{ $json.output.attachment_analysis }}\n- Clarification Questions: {{ $json.output.clarification_questions }}\n",
-        "hasOutputParser": true,
-        "messages": {
-          "messageValues": [
-            {
-              "message": "You are a helpful IT Support employee from **Team IT**. Your goal is to write a professional and clear email to a (non-technical) user based on a ticket summary and a pre-defined list of questions. The purpose of the email is to gather the necessary information to resolve their IT issue.  \n**# Core Instructions**  \n1.  **Language:** You **MUST** write the entire email in the same language as the provided `Ticket Summary`. \n2.  **Structure:**     \n* Start with a polite greeting using the `User Name`.     \n* Briefly acknowledge the user's problem based on the `Ticket Summary`.     \n* State that you need a bit more information to help.\n* Be aware, that the user might not be able to understand technical details directly. It needs to be formulated in a way everyone understands\n* Keep the mail as short as possible, but as long as needed.\n* Don't include the subject, just the content of the mail.     \n* Present the `Questions to Ask` clearly, preferably in a numbered list.     \n* End with a professional closing from \"Team IT\".  \n**# Input Format**  * `## Customer Name:` The Customers name. * `## Ticket Summary:` A short description of the user's problem. * * `## Attachment Summary:` A short description of the attachments provided. * `## Questions to Ask:` A list of questions you need to include in the email, but can be rewritten.  \n---  ### **Example**  **[START OF INPUT]**  `## User Name:` Klaus `## Ticket Summary:` Benutzer kann sich nicht mit dem VPN verbinden, bekommt immer eine Fehlermeldung. `## Questions to Ask:` 1. Welche Fehlermeldung wird genau angezeigt? (Bitte Screenshot beifügen) 2. Von welchem Standort aus versuchen Sie sich zu verbinden (Büro oder Homeoffice)? 3. Haben Sie versucht, den Computer neu zu starten?  **[END OF INPUT]**  **[EXPECTED OUTPUT DRAFT]**  Hallo Klaus, vielen Dank für Ihre Nachricht. Ich habe gesehen, dass Sie Probleme mit der VPN-Verbindung haben.  Um das Problem schnell für Sie zu lösen, benötige ich noch ein paar zusätzliche Informationen. Könnten Sie mir bitte die folgenden Fragen beantworten?  1.  Welche Fehlermeldung wird genau angezeigt? (Bitte fügen Sie, wenn möglich, einen Screenshot bei) 2.  Von welchem Standort aus versuchen Sie sich zu verbinden (Büro oder Homeoffice)? 3.  Haben Sie bereits versucht, den Computer neu zu starten?  Sobald ich Ihre Antworten habe, kann ich die nächsten Schritte einleiten.  Viele Grüße,  Team IT"
-            }
-          ]
-        },
-        "batching": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.chainLlm",
-      "typeVersion": 1.7,
-      "position": [1232, 848],
-      "id": "5622b9d5-3cb1-47ac-a182-c70c5b9546ec",
-      "name": "Draft Ticket Response"
-    },
-    {
-      "parameters": {
         "resource": "channelMessage",
         "teamId": {
           "__rl": true,
@@ -269,7 +249,7 @@
           "cachedResultUrl": "https://teams.cloud.microsoft/l/channel/19%3AQkBEBfBTzgie0IpxWzP6TlQu71o5V7xNOshVTwxLjss1%40thread.tacv2/tlv-n8n-team?groupId=19231660-890a-4d8c-aa37-eec9155a7382&tenantId=f50f53d7-0e4f-4626-a1a9-9fe190a9fe64&allowXTenantAccess=True&ngc=True"
         },
         "contentType": "html",
-        "message": "=<div style=\"margin:0;padding:0;font-family:'Segoe UI', Arial, sans-serif;\">\n\t<div style=\"max-width:760px;margin:0 auto;\">\n\t\t<p style=\"margin:0 0 8px 0;font-weight:600;\">TANSS ticket reply ready for approval</p>\n\n\t\t<h2 style=\"margin:0 0 12px 0;line-height:1.3;\">\n\t\t\t{{ $('Merge with Ticketdata').item.json.title }}\n\t\t</h2>\n\n\t\t<ul style=\"margin:0 0 12px 0;padding-left:16px;\">\n\t\t\t<li><strong>Ticket ID</strong>: {{ $('Merge with Ticketdata').item.json.id }}</li>\n\t\t\t<li><strong>Reporter</strong>: {{ $('Merge with Ticketdata').item.json.inboundMails[0].senderName }}</li>\n\t\t\t<li><strong>Documents</strong>: {{ $('Merge with Ticketdata').item.json.numberOfDocuments }} Document(s)</li>\n\t\t\t<li><strong>Department</strong>: {{ $('Ticket Information Extractor').item.json.output.department_id }}</li>\n\t\t\t<li><strong>Priority</strong>: {{ $('Ticket Information Extractor').item.json.output.priority }}</li>\n\t\t</ul>\n\n\t\t<hr style=\"margin:8px 0 12px 0;\">\n\n\t\t<p style=\"margin:12px 0 6px 0;font-weight:600;\">AI summary</p>\n\t\t<blockquote style=\"margin:0 0 12px 0;\">\n\t\t\t{{ $('Ticket Information Extractor').item.json.output.summary }}\n\t\t</blockquote>\n\n\t\t<p style=\"margin:12px 0 6px 0;font-weight:600;\">Full draft (to be posted to TANSS as a public reply)</p>\n\t\t<pre style=\"margin:0 0 12px 0;white-space:pre-wrap;max-height:380px;overflow:auto;\">\n{{$json.text}}\n\t\t</pre>\n\n\t\t<p style=\"margin-top:12px;\">\n\t\t\t<a href=\"{{$execution.resumeUrl}}?ticketId={{ $('Merge with Ticketdata').item.json.id }}&send=true\">Approve and send via TANSS</a> ·\n\t\t\t<a href=\"{{$execution.resumeUrl}}?ticketId={{ $('Merge with Ticketdata').item.json.id }}&send=false\">Reject</a> ·\n\t\t\t<a href=\"https://your-n8n.example/webhook/tanss-request-changes?ticketId={{ $('Merge with Ticketdata').item.json.id }}\">Request changes (form)</a>\n\t\t</p>\n\n\t\t<p style=\"margin:8px 0 0 0;font-size:12px;\">Prefer working in Teams? Reply in this thread with your change requests starting with <code>CHANGE:</code>. The bot will auto-rewrite the draft and post an updated version here.</p>\n\n\t\t<p style=\"margin-top:4px;font-size:12px;\">This action will trigger the TANSS API to post the reply on the ticket.</p>\n\t</div>\n</div>",
+        "message": "=<div style=\"margin:0;padding:0;font-family:'Segoe UI', Arial, sans-serif;\">\n\t<div style=\"max-width:760px;margin:0 auto;\">\n\t\t<p style=\"margin:0 0 8px 0;font-weight:600;\">TANSS ticket reply ready for approval</p>\n\n\t\t<h2 style=\"margin:0 0 12px 0;line-height:1.3;\">\n\t\t\t{{ $('Merge with Ticketdata').item.json.title }}\n\t\t</h2>\n\n\t\t<ul style=\"margin:0 0 12px 0;padding-left:16px;\">\n\t\t\t<li><strong>Ticket ID</strong>: {{ $('Merge with Ticketdata').item.json.id }}</li>\n\t\t\t<li><strong>Reporter</strong>: {{ $('Merge with Ticketdata').item.json.inboundMails[0].senderName }}</li>\n\t\t\t<li><strong>Documents</strong>: {{ $('Merge with Ticketdata').item.json.numberOfDocuments }} Document(s)</li>\n\t\t\t<li><strong>Department</strong>: {{ $('Ticket Information Extractor').item.json.output.department_id }}</li>\n\t\t\t<li><strong>Priority</strong>: {{ $('Ticket Information Extractor').item.json.output.priority }}</li>\n\t\t</ul>\n\n\t\t<hr style=\"margin:8px 0 12px 0;\">\n\n\t\t<p style=\"margin:12px 0 6px 0;font-weight:600;\">AI summary</p>\n\t\t<blockquote style=\"margin:0 0 12px 0;\">\n\t\t\t{{ $('Ticket Information Extractor').item.json.output.summary }}\n\t\t</blockquote>\n\n\t\t<p style=\"margin:12px 0 6px 0;font-weight:600;\">Full draft (to be posted to TANSS as a public reply)</p>\n\t\t<pre style=\"margin:0 0 12px 0;white-space:pre-wrap;max-height:380px;overflow:auto;\">\n{{$json.output}}\n\t\t</pre>\n\n\t\t<p style=\"margin-top:12px;\">\n\t\t\t<a href=\"{{$execution.resumeUrl}}?ticketId={{ $('Merge with Ticketdata').item.json.id }}&send=true\">Approve and send via TANSS</a> ·\n\t\t\t<a href=\"{{$execution.resumeUrl}}?ticketId={{ $('Merge with Ticketdata').item.json.id }}&send=false\">Reject</a> ·\n\t\t\t<a href=\"https://your-n8n.example/webhook/tanss-request-changes?ticketId={{ $('Merge with Ticketdata').item.json.id }}\">Request changes (form)</a>\n\t\t</p>\n\n\t\t<p style=\"margin:8px 0 0 0;font-size:12px;\">Prefer working in Teams? Reply in this thread with your change requests starting with <code>CHANGE:</code>. The bot will auto-rewrite the draft and post an updated version here.</p>\n\n\t\t<p style=\"margin-top:4px;font-size:12px;\">This action will trigger the TANSS API to post the reply on the ticket.</p>\n\t</div>\n</div>",
         "options": {}
       },
       "type": "n8n-nodes-base.microsoftTeams",
@@ -346,7 +326,7 @@
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [2656, 496],
+      "position": [2656, 576],
       "id": "b8023e1b-c3df-4419-a7d8-f5a3b2c96930",
       "name": "Post approved reply to TANSS",
       "credentials": {
@@ -424,7 +404,7 @@
         "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [2608, 432],
+      "position": [2608, 512],
       "typeVersion": 1,
       "id": "a8766632-699e-4a38-9142-34714336353a",
       "name": "Sticky Note3"
@@ -440,12 +420,12 @@
     {
       "parameters": {
         "content": "## TANSS Manipulation\nThese Nodes are responsible for making edits to the original TANSS Tickets",
-        "height": 608,
+        "height": 880,
         "width": 432,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [2400, 240],
+      "position": [2400, 336],
       "typeVersion": 1,
       "id": "28254512-3995-4ed5-be01-03d1416b918c",
       "name": "Sticky Note1"
@@ -453,12 +433,12 @@
     {
       "parameters": {
         "content": "## AI Stack\n*  Ticket Classification \n*  Response Automation ",
-        "height": 656,
+        "height": 1280,
         "width": 784,
-        "color": 2
+        "color": 4
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [688, 640],
+      "position": [688, 336],
       "typeVersion": 1,
       "id": "96e53138-6e82-4cfb-b59f-2e1743071668",
       "name": "Sticky Note4"
@@ -542,7 +522,7 @@
       "parameters": {
         "content": "## Mails\n",
         "width": 464,
-        "color": 5
+        "color": 2
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [-272, 624],
@@ -564,16 +544,148 @@
     },
     {
       "parameters": {
-        "content": "\n\n\n\n\n\n\n\n\n\n\n\n\n## Human in the Loop - Teams Flow",
-        "height": 448,
+        "content": "## \"Human in the Loop\" - Teams Flow",
+        "height": 880,
         "width": 928,
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
-      "position": [1472, 576],
+      "position": [1472, 336],
       "typeVersion": 1,
       "id": "15e0a62f-0c8e-45d2-aa47-43242d4e2509",
       "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [432, 1488],
+      "id": "14dc070e-d6c5-479c-a7b3-befbc9f909a0",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsMistralCloud",
+      "typeVersion": 1,
+      "position": [992, 1376],
+      "id": "1aab3fcb-2651-4abf-bdf5-54329457494d",
+      "name": "Embeddings Mistral Cloud",
+      "credentials": {
+        "mistralCloudApi": {
+          "id": "OKqIIU4OvY7yKbuT",
+          "name": "Mistral Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [384, 1264],
+      "id": "e37156cf-b78f-4264-89f0-3271e680dcd9",
+      "name": "Insert Data to Store"
+    },
+    {
+      "parameters": {
+        "formTitle": "RAG Data Form",
+        "formDescription": "Insert documents to be stored into a RAG",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Documents",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [128, 1264],
+      "id": "d8c3d084-6098-416c-a1d1-b67ac4d031bf",
+      "name": "On form submission",
+      "webhookId": "d11b1562-ea55-4878-a151-a52a9f30b2b6"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this knowledge base to create questions to the customer and answer his support ticket",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.3,
+      "position": [1200, 1136],
+      "id": "576b052f-fc7c-45a4-a50e-7b3ff84a3ab0",
+      "name": "Knowledge Base"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ticket Data:\n- Ticket Title: {{ $('Merge with Ticketdata').item.json.title }}\n- Ticket Content: {{ $('Merge with Ticketdata').item.json.content }}\n- Ticket Summary:  {{ $json.output.summary }}\n- Attachment Analysis: {{ $json.output.attachment_analysis }}\n- Clarification Questions: {{ $json.output.clarification_questions }}\n",
+        "options": {
+          "systemMessage": "You are a helpful IT Support employee from **Team IT**. Your goal is to write a professional and clear email to a (non-technical) user based on a ticket summary and a pre-defined list of questions. The purpose of the email is to gather the necessary information to resolve their IT issue.  |**# Core Instructions**  1.  **Language:** You **MUST** write the entire email in the same language as the provided `Ticket Summary`. 2.  **Structure:**     * Start with a polite greeting using the `User Name`.     * Briefly acknowledge the user's problem based on the `Ticket Summary`.     * State that you need a bit more information to help.* Be aware, that the user might not be able to understand technical details directly. It needs to be formulated in a way everyone understands* Keep the mail as short as possible, but as long as needed.* Don't include the subject, just the content of the mail.     * Present the `Questions to Ask` clearly, preferably in a numbered list.     * End with a professional closing from \"Team IT\".  **# Input Format**  * `## Customer Name:` The Customers name. * `## Ticket Summary:` A short description of the user's problem. * * `## Attachment Summary:` A short description of the attachments provided. * `## Questions to Ask:` A list of questions you need to include in the email, but can be rewritten.  ---  ### **Example**  **[START OF INPUT]**  `## User Name:` Klaus `## Ticket Summary:` Benutzer kann sich nicht mit dem VPN verbinden, bekommt immer eine Fehlermeldung. `## Questions to Ask:` 1. Welche Fehlermeldung wird genau angezeigt? (Bitte Screenshot beifügen) 2. Von welchem Standort aus versuchen Sie sich zu verbinden (Büro oder Homeoffice)? 3. Haben Sie versucht, den Computer neu zu starten?  **[END OF INPUT]**  **[EXPECTED OUTPUT DRAFT]**  Hallo Klaus, vielen Dank für Ihre Nachricht. Ich habe gesehen, dass Sie Probleme mit der VPN-Verbindung haben.  Um das Problem schnell für Sie zu lösen, benötige ich noch ein paar zusätzliche Informationen. Könnten Sie mir bitte die folgenden Fragen beantworten?  1.  Welche Fehlermeldung wird genau angezeigt? (Bitte fügen Sie, wenn möglich, einen Screenshot bei) 2.  Von welchem Standort aus versuchen Sie sich zu verbinden (Büro oder Homeoffice)? 3.  Haben Sie bereits versucht, den Computer neu zu starten?  Sobald ich Ihre Antworten habe, kann ich die nächsten Schritte einleiten.  Viele Grüße,  Team IT"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [1200, 848],
+      "id": "af474b7a-837a-4ffc-9acf-de38d803894b",
+      "name": "Ticket AI Agent"
+    },
+    {
+      "parameters": {
+        "content": "## RAG System\nThis section is used to store Data in a Vector Store to make it available for the Ticket AI Agent",
+        "height": 624,
+        "width": 608,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [80, 992],
+      "typeVersion": 1,
+      "id": "5bda4763-b1ac-4e38-a249-d20f8101c9da",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## TANSS Ticket Data Processing\n",
+        "height": 656,
+        "width": 1792,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [-1104, 336],
+      "typeVersion": 1,
+      "id": "b2f3bd6c-8d7f-4adc-a3e5-60f3799ce50c",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "## Trigger and API Login\n",
+        "height": 656,
+        "width": 432,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [-1536, 336],
+      "typeVersion": 1,
+      "id": "e50b0f38-6ea4-45a7-b63c-2a4a69b48152",
+      "name": "Sticky Note10"
     }
   ],
   "connections": {
@@ -658,7 +770,7 @@
             "index": 0
           },
           {
-            "node": "Draft Ticket Response",
+            "node": "Ticket AI Agent",
             "type": "main",
             "index": 0
           }
@@ -688,17 +800,6 @@
         [
           {
             "node": "Ticket Information Extractor",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Draft Ticket Response": {
-      "main": [
-        [
-          {
-            "node": "create message and wait for reply",
             "type": "main",
             "index": 0
           }
@@ -750,7 +851,7 @@
             "index": 0
           },
           {
-            "node": "Draft Ticket Response",
+            "node": "Ticket AI Agent",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -779,7 +880,7 @@
       "main": [
         [
           {
-            "node": "Draft Ticket Response",
+            "node": "Ticket AI Agent",
             "type": "main",
             "index": 0
           }
@@ -815,6 +916,66 @@
             "node": "Merge Mail and Attachments",
             "type": "main",
             "index": 1
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Mistral Cloud": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Ticket AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ticket AI Agent": {
+      "main": [
+        [
+          {
+            "node": "create message and wait for reply",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -1368,6 +1529,31 @@
             "mayRemove": true
           }
         ]
+      }
+    ],
+    "Execute Attachment Workflow": [],
+    "Get Ticket History": [
+      {
+        "inboundMails": [
+          {
+            "senderName": "noreply@rmmservice.com",
+            "subject": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
+            "bodyPlain": "New support request from \nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition \nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek\n"
+          }
+        ],
+        "outboundMails": []
+      }
+    ],
+    "Restructure Mail Data": [
+      {
+        "inboundMails": [
+          {
+            "senderName": "noreply@rmmservice.com",
+            "subject": "Help request from Krawinkel Ingenieure GmbH / Pc nutzt nicht gesamtenverfügbaren Arbeitsspeicher",
+            "bodyPlain": "New support request from \nFirst Name: Fynn\nLast Name: Smyrek\nEmail: f.smyrek@krawinkel.net\nPhone: 02151 768046\nSubject: Pc nutzt nicht gesamten verfügbaren Arbeitsspeicher\nProblem Description: Mein PC nutzt von den 64GB Arbeitsspeicher maximal 32 GB und für ein Programm maximal 2 GB. Wodurch Prozesse häufig abstürzen oder ewig brauchen.\nDa eine Abgabe bevorsteht benötige ich dringend Unterstützung.\nLiebe Grüße\nFynn Smyrek\nDevice: KI236\nNinja URL: https://team-it.rmmservice.eu/#/deviceDashboard/2008/overview\nDevice Role: WINDOWS_WORKSTATION\nPublic IP: 109.90.96.117\nPrivate IPs: 192.168.61.61;fd00::b2ce:d353:69c6:8420|fd00::59ec:2679:6642:8d8d|fe80::26d0:53d7:3e88:f30c;169.254.86.127;fe80::cc5:66db:4aa8:8b38\nDevice ID: 2.008\nOrganization: Krawinkel Ingenieure GmbH\nLocation: Hauptsitz\nDescription: <UNKNOWN>\nOrganization URL: https://team-it.rmmservice.eu/#/customerDashboard/49/overview\nPolicy: Windows Workstation - TeamIT 1.0\nPolicy Description: 2023-06-08\nPolicy URL: https://team-it.rmmservice.eu/#/editor/policy/35\nEnvironment Variables\nCOMPUTERNAME: KI236\nOS: Windows 11 Professional Edition \nNUMBER_OF_PROCESSORS: 32\nPROCESSOR_ARCHITECTURE: x86_64\nUSERDOMAIN: KI-GMBH-KREFELD\nUSERNAME: Smyrek\n"
+          }
+        ],
+        "outboundMails": []
       }
     ]
   },
