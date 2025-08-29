@@ -104,3 +104,68 @@ These workflows use the n8n LangChain community nodes. In n8n:
 
 - Keep all secrets in n8n Credentials; do not commit keys/tokens.
 - Restrict access to n8n and rotate API keys regularly.
+
+## Deployment & CI/CD Plan (n8n)
+
+Below is a minimal-effort, environment-agnostic plan to deploy self-hosted n8n with these workflows and keep them in sync with Git on every push.
+
+- Source of truth: This repo (`workflows/**`) remains canonical.
+- One-click/local: `docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d` brings up n8n and auto-imports workflows.
+- CI/CD: On push, GitHub Actions can trigger your n8n instance to pull from Git via n8n Source Control, or fall back to importing via the Public API using a script.
+- Environments: Works for Docker local, servers/VMs, Kubernetes (Helm values), and AWS ECS (task def skeleton).
+
+### Preferred sync method: n8n Source Control
+
+1. In your n8n instance: connect to your Git repo (Settings → Environments → Connect). Choose your branch per environment and enable Protected instance in prod.
+2. CI/CD: Configure the GitHub Action in `.github/workflows/n8n-sync.yml` with `INSTANCE_URL` and `INSTANCE_API_KEY` secrets. On each push, the action calls `POST /api/v1/source-control/pull` to fetch the latest commit.
+3. Access control: Keep this repo private; use deploy keys from within n8n.
+
+Reference: n8n Source Control Pull API `POST /api/v1/source-control/pull` and example GitHub Action from the n8n docs.
+
+### Fallback sync method: Public API import
+
+For instances without Source Control enabled, a Node script (`scripts/sync-workflows.mjs`) reads `workflows/**/*.json`, upserts them via the n8n Public API, and optionally activates them. You can:
+
+- Run it locally after startup (Compose includes an optional `deployer` service for one-click).
+- Run it in CI (GitHub Action step) using `N8N_BASE_URL` and `N8N_API_KEY` secrets.
+
+### Artifacts added in this repo
+
+- `deploy/docker-compose.yml`: Production-leaning local stack (n8n + optional importer) with persistent volume.
+- `deploy/.env.example`: Copy to `deploy/.env` and fill instance-specific values (timezone, API key, etc.).
+- `scripts/await-n8n.mjs`: Waits for n8n readiness using the Public API.
+- `scripts/sync-workflows.mjs`: Upserts and optionally activates workflows via Public API.
+- `.github/workflows/n8n-sync.yml`: Triggers Source Control pull via API.
+- `helm/values.n8n.yaml`: Example values for the 8gears Helm chart.
+- `aws/ecs-taskdef.json`: ECS Fargate task definition skeleton.
+- `deploy/credentials-overwrite.example.json`: Shows how to provision client IDs/secrets via overwrite file.
+
+### Usage
+
+- Local one-click:
+
+  1. Copy `deploy/.env.example` → `deploy/.env` and set `GENERIC_TIMEZONE`, `N8N_API_KEY`, etc.
+  2. Run:
+
+  ```bash
+  docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d
+  ```
+
+  3. First run only: open n8n, create owner user, create an API key, and put it into `deploy/.env`. Restart `deployer` service or re-run the command above to import workflows.
+
+- CI (Source Control):  
+  Add `INSTANCE_URL` (like `https://n8n.example.com/api/v1`) and `INSTANCE_API_KEY` as GitHub repo secrets. On push, the action triggers `source-control/pull`.
+
+- CI (API Import fallback):  
+  Add `N8N_BASE_URL` (like `https://n8n.example.com`) and `N8N_API_KEY` as secrets. Add a step to run `node scripts/sync-workflows.mjs --activate`.
+
+### Security & credentials
+
+- Prefer n8n Credentials for secrets; do not commit secrets.
+- If you must provision client IDs/secrets at deploy time, use the overwrite file pattern (see `deploy/credentials-overwrite.example.json`) and mount it, setting `CREDENTIALS_OVERWRITE_FILE`.
+
+### Tests & checks
+
+- Smoke test: `GET /api/v1/workflows?limit=1` should respond 200 with Public API key.
+- After import: ensure main workflow is set to active; scheduled triggers run as configured.
+- Metrics/health: optionally enable `/metrics` and `/healthz` via envs.

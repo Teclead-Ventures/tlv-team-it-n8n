@@ -1,0 +1,42 @@
+# Example values for 8gears/n8n-helm-chart
+
+image:
+  repository: docker.n8n.io/n8nio/n8n
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+service:
+  type: ClusterIP
+  port: 5678
+
+ingress:
+  enabled: true
+  className: ""
+  hosts:
+    - host: n8n.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+persistence:
+  enabled: true
+  size: 10Gi
+
+extraEnv:
+  - name: GENERIC_TIMEZONE
+    value: Europe/Berlin
+  - name: N8N_PROTOCOL
+    value: https
+  - name: N8N_HOST
+    value: n8n.example.com
+  - name: N8N_PORT
+    value: "5678"
+  - name: WEBHOOK_URL
+    value: https://n8n.example.com/
+  - name: N8N_PUBLIC_API_SWAGGERUI_DISABLED
+    value: "true"
+  - name: N8N_METRICS
+    value: "true"

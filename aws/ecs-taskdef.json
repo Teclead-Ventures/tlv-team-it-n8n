@@ -1,0 +1,37 @@
+{
+  "family": "n8n-task",
+  "requiresCompatibilities": ["FARGATE"],
+  "networkMode": "awsvpc",
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::<account-id>:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::<account-id>:role/n8nTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "n8n",
+      "image": "docker.n8n.io/n8nio/n8n:latest",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 5678, "hostPort": 5678, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "GENERIC_TIMEZONE", "value": "Europe/Berlin" },
+        { "name": "N8N_PROTOCOL", "value": "https" },
+        { "name": "N8N_HOST", "value": "n8n.example.com" },
+        { "name": "N8N_PORT", "value": "5678" },
+        { "name": "WEBHOOK_URL", "value": "https://n8n.example.com/" },
+        { "name": "N8N_PUBLIC_API_SWAGGERUI_DISABLED", "value": "true" },
+        { "name": "N8N_METRICS", "value": "true" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/n8n",
+          "awslogs-region": "eu-central-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ],
+  "volumes": []
+}

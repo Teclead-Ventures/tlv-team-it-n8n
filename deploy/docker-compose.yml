@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:latest
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - GENERIC_TIMEZONE=${GENERIC_TIMEZONE}
+      - TZ=${GENERIC_TIMEZONE}
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_PROTOCOL=${N8N_PROTOCOL}
+      - N8N_HOST=${N8N_HOST}
+      - N8N_PORT=${N8N_PORT}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - N8N_PUBLIC_API_SWAGGERUI_DISABLED=${N8N_PUBLIC_API_SWAGGERUI_DISABLED}
+      - N8N_METRICS=${N8N_METRICS}
+      - N8N_RUNNERS_ENABLED=true
+      - CREDENTIALS_OVERWRITE_FILE=${CREDENTIALS_OVERWRITE_FILE}
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  # Optional: run with --profile deployer to auto-import/activate workflows via Public API
+  deployer:
+    image: node:20-alpine
+    profiles: ["deployer"]
+    depends_on:
+      - n8n
+    working_dir: /app
+    environment:
+      - N8N_BASE_URL=http://n8n:5678
+      - N8N_API_KEY=${N8N_API_KEY}
+      - WORKFLOWS_DIR=workflows
+    command: sh -lc "node scripts/await-n8n.mjs && node scripts/sync-workflows.mjs --activate"
+    volumes:
+      - ../:/app:ro
+
+volumes:
+  n8n_data:

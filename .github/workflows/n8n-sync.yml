@@ -1,0 +1,43 @@
+name: n8n Sync
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'workflows/**'
+      - '.github/workflows/n8n-sync.yml'
+      - 'scripts/**'
+  workflow_dispatch: {}
+
+jobs:
+  pull-via-source-control:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Source Control pull
+        id: sc_pull
+        run: |
+          set -euo pipefail
+          curl --fail --show-error --silent --location \
+            "${{ secrets.INSTANCE_URL }}/api/v1/source-control/pull" \
+            --header 'Content-Type: application/json' \
+            --header "X-N8N-API-KEY: ${{ secrets.INSTANCE_API_KEY }}" \
+            --data '{"force": true}'
+
+      - name: Checkout (for fallback)
+        if: failure()
+        uses: actions/checkout@v4
+
+      - name: Setup Node (fallback)
+        if: failure()
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fallback: Public API import & activate
+        if: failure()
+        run: |
+          node scripts/sync-workflows.mjs --activate
+        env:
+          N8N_BASE_URL: ${{ secrets.N8N_BASE_URL }}
+          N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
+
