@@ -1,27 +1,45 @@
-### Deploying n8n with Docker Compose
+### Docker Compose (Local)
 
-1. Copy `.env.example` to `.env` and set values.
+1. Copy and edit env:
+
+```bash
+cp deploy/.env.example deploy/.env
+# open deploy/.env and set GENERIC_TIMEZONE; leave N8N_API_KEY empty for now
+```
+
 2. Start n8n:
 
 ```bash
 docker compose -f deploy/docker-compose.yml --env-file deploy/.env up -d
 ```
 
-3. First run only: Open n8n in the browser, create the owner user and generate an API key. Paste it into `deploy/.env` as `N8N_API_KEY`.
+3. Create API key in n8n UI:
 
-4. Optional: Auto-import/activate workflows via Public API (requires API key):
+- Open http://localhost:5678
+- Create the owner user if prompted
+- Go to Settings → Users → API Keys → Create → copy the key
+- Paste into `deploy/.env` as `N8N_API_KEY=...`
+
+4. Import workflows (one-time or on demand):
 
 ```bash
-docker compose -f deploy/docker-compose.yml --env-file deploy/.env --profile deployer up deployer
+docker compose -f deploy/docker-compose.yml --env-file deploy/.env --profile deployer up --force-recreate --no-deps deployer
 ```
 
-The importer reads JSON files under `workflows/**` and upserts them by name.
+Notes:
 
-### CI/CD
-
-- Preferred: Connect n8n Source Control (Settings → Environments) to this repo, then use the GitHub Action `.github/workflows/n8n-sync.yml` with `INSTANCE_URL` and `INSTANCE_API_KEY` secrets. On push, it triggers `POST /api/v1/source-control/pull`.
-- Fallback: The Action will run `scripts/sync-workflows.mjs --activate` using `N8N_BASE_URL` and `N8N_API_KEY` secrets if the pull fails.
+- The importer reads all JSON under `workflows/**` and upserts by name.
+- Remove `--activate` in `scripts/sync-workflows.mjs` call if you don’t want auto-activation.
 
 ### Credentials Overwrite (optional)
 
-Copy `deploy/credentials-overwrite.example.json` to `deploy/credentials-overwrite.json`, fill values, mount it, and set `CREDENTIALS_OVERWRITE_FILE` in `.env`.
+1. Create `deploy/credentials-overwrite.json` (based on `.example`) with client IDs/secrets (no API keys).
+2. Mount the file and set `CREDENTIALS_OVERWRITE_FILE` in environment:
+
+- Compose: set in `deploy/.env` and mount the file in `docker-compose.yml` if needed.
+- Helm/ECS: add file to a Secret and mount or expose as env.
+
+Security tips:
+
+- Never commit API keys/tokens. Use Secrets (K8s Secrets, AWS Secrets Manager, GitHub Actions Secrets).
+- Restrict inbound access to n8n and rotate keys periodically.

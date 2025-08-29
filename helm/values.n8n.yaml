@@ -40,3 +40,43 @@ extraEnv:
     value: "true"
   - name: N8N_METRICS
     value: "true"
+
+extraObjects:
+  - apiVersion: v1
+    kind: Secret
+    metadata:
+      name: n8n-secrets
+    type: Opaque
+    stringData:
+      apiKey: "REPLACE_WITH_YOUR_API_KEY"
+  - apiVersion: batch/v1
+    kind: Job
+    metadata:
+      name: n8n-workflows-import
+      annotations:
+        helm.sh/hook: post-install,post-upgrade
+        helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: importer
+              image: node:20-alpine
+              env:
+                - name: N8N_BASE_URL
+                  value: "http://n8n:5678"
+                - name: N8N_API_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: n8n-secrets
+                      key: apiKey
+              command:
+                - sh
+                - -lc
+                - >
+                  apk add --no-cache git curl &&
+                  git clone https://github.com/your-org/your-repo.git /app &&
+                  cd /app &&
+                  node scripts/await-n8n.mjs &&
+                  node scripts/sync-workflows.mjs --activate

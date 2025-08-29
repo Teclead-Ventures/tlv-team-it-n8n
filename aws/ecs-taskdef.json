@@ -11,6 +11,16 @@
       "name": "n8n",
       "image": "docker.n8n.io/n8nio/n8n:latest",
       "essential": true,
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1:5678/api/v1/workflows?limit=1 || exit 1"
+        ],
+        "interval": 10,
+        "timeout": 5,
+        "retries": 12,
+        "startPeriod": 10
+      },
       "portMappings": [
         { "containerPort": 5678, "hostPort": 5678, "protocol": "tcp" }
       ],
@@ -27,6 +37,33 @@
         "logDriver": "awslogs",
         "options": {
           "awslogs-group": "/ecs/n8n",
+          "awslogs-region": "eu-central-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    },
+    {
+      "name": "importer",
+      "image": "node:20-alpine",
+      "essential": false,
+      "dependsOn": [{ "containerName": "n8n", "condition": "HEALTHY" }],
+      "environment": [
+        { "name": "N8N_BASE_URL", "value": "http://127.0.0.1:5678" },
+        {
+          "name": "REPO_URL",
+          "value": "https://github.com/your-org/your-repo.git"
+        },
+        { "name": "N8N_API_KEY", "value": "REPLACE_WITH_SECRET" }
+      ],
+      "command": [
+        "sh",
+        "-lc",
+        "apk add --no-cache git curl && git clone $REPO_URL /app && cd /app && node scripts/await-n8n.mjs && node scripts/sync-workflows.mjs --activate"
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/n8n-importer",
           "awslogs-region": "eu-central-1",
           "awslogs-stream-prefix": "ecs"
         }
