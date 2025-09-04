@@ -273,6 +273,14 @@ class SmartWorkflowMerger {
       merged.meta.instanceId = existingWorkflow.meta.instanceId;
     }
 
+    // Smart settings merging - preserve instance settings while applying repo changes
+    if (existingWorkflow.settings || repoWorkflow.settings) {
+      merged.settings = {
+        ...existingWorkflow.settings, // Start with existing instance settings
+        ...repoWorkflow.settings, // Apply repository settings on top
+      };
+    }
+
     // Smart node merging
     if (repoWorkflow.nodes && existingWorkflow.nodes) {
       merged.nodes = this.mergeNodes(
@@ -452,9 +460,7 @@ class SmartWorkflowSyncer {
         // Extract workflow name from filename if not present in JSON
         if (!workflow.name) {
           const fileName = path.basename(filePath, ".json");
-          workflow.name = fileName
-            .replace(/_/g, " ")
-            .replace(/\b\w/g, (l) => l.toUpperCase());
+          workflow.name = fileName; // Keep filename as-is
           console.log(
             `📝 Adding workflow name from filename: ${workflow.name}`
           );
