@@ -29,7 +29,7 @@ docker compose -f deploy/docker-compose.yml --env-file deploy/.env --profile dep
 Notes:
 
 - The importer reads all JSON under `workflows/**` and upserts by name.
-- Remove `--activate` in `scripts/sync-workflows.mjs` call if you don’t want auto-activation.
+- The new smart sync script automatically handles activation as needed.
 
 ### Credentials Overwrite (optional)
 
