@@ -126,77 +126,28 @@ class N8nApiClient {
   }
 
   cleanWorkflowForApi(workflow) {
-    // Build clean workflow with only allowed properties
-    const cleaned = {
-      name: workflow.name,
-      active: workflow.active || false,
-      nodes: workflow.nodes || [],
-      connections: workflow.connections || {},
-      settings: workflow.settings || {},
-      staticData: workflow.staticData || null,
-      tags: workflow.tags || [],
-      pinData: workflow.pinData || {},
-    };
+    // Use the same approach as the working old script - only keep allowed properties
+    const allowed = ["name", "nodes", "connections", "settings"];
+    const cleaned = {};
 
-    // Handle meta object - remove instanceId and other instance-specific meta
-    if (workflow.meta) {
-      const cleanedMeta = { ...workflow.meta };
-      delete cleanedMeta.instanceId;
-      delete cleanedMeta.templateCredsSetupCompleted; // Instance-specific
-
-      // Only include meta if it has remaining properties
-      if (Object.keys(cleanedMeta).length > 0) {
-        cleaned.meta = cleanedMeta;
-      }
+    // Copy only allowed fields (same as old working script)
+    for (const key of allowed) {
+      if (key in workflow) cleaned[key] = workflow[key];
     }
 
-    // Clean nodes of any sanitization markers and invalid properties
-    if (cleaned.nodes) {
-      cleaned.nodes = cleaned.nodes.map((node) => this.cleanNodeForApi(node));
+    // Ensure required fields with safe defaults
+    cleaned.name = cleaned.name || "Imported Workflow";
+    cleaned.settings = cleaned.settings || {};
+    cleaned.connections = cleaned.connections || {};
+
+    // Remove node IDs to avoid conflicts (exactly like old working script)
+    if (Array.isArray(cleaned.nodes)) {
+      cleaned.nodes = cleaned.nodes.map(({ id, ...node }) => node);
     }
 
-    return cleaned;
-  }
-
-  cleanNodeForApi(node) {
-    // Build clean node with only allowed properties
-    const cleaned = {
-      name: node.name,
-      type: node.type,
-      typeVersion: node.typeVersion,
-      position: node.position,
-      parameters: node.parameters || {},
-    };
-
-    // Include credentials if present, cleaned of sanitization markers
-    if (node.credentials) {
-      const cleanedCredentials = {};
-      for (const [type, cred] of Object.entries(node.credentials)) {
-        if (cred && typeof cred === "object") {
-          // Remove sanitization markers, keep only valid credential properties
-          const { _preserveInstance, _type, ...cleanCred } = cred;
-          cleanedCredentials[type] = cleanCred;
-        } else {
-          cleanedCredentials[type] = cred;
-        }
-      }
-      cleaned.credentials = cleanedCredentials;
-    }
-
-    // Include other valid node properties if they exist
-    if (node.id) cleaned.id = node.id;
-    if (node.webhookId) cleaned.webhookId = node.webhookId;
-    if (node.continueOnFail !== undefined)
-      cleaned.continueOnFail = node.continueOnFail;
-    if (node.alwaysOutputData !== undefined)
-      cleaned.alwaysOutputData = node.alwaysOutputData;
-    if (node.executeOnce !== undefined) cleaned.executeOnce = node.executeOnce;
-    if (node.retryOnFail !== undefined) cleaned.retryOnFail = node.retryOnFail;
-    if (node.maxTries !== undefined) cleaned.maxTries = node.maxTries;
-    if (node.waitBetween !== undefined) cleaned.waitBetween = node.waitBetween;
-    if (node.notes !== undefined) cleaned.notes = node.notes;
-    if (node.notesInFlow !== undefined) cleaned.notesInFlow = node.notesInFlow;
-    if (node.color !== undefined) cleaned.color = node.color;
+    console.log(
+      `   🔧 API request properties: ${Object.keys(cleaned).join(", ")}`
+    );
 
     return cleaned;
   }
