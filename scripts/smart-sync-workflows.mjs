@@ -96,13 +96,75 @@ class N8nApiClient {
   async createWorkflow(workflow, apiVersion) {
     const endpoint =
       apiVersion === "v1" ? "/api/v1/workflows" : "/rest/workflows";
-    return this.request("POST", endpoint, workflow);
+
+    // Clean workflow for API - remove read-only and instance-specific fields
+    const cleanedWorkflow = this.cleanWorkflowForApi(workflow);
+    return this.request("POST", endpoint, cleanedWorkflow);
   }
 
   async updateWorkflow(id, workflow, apiVersion) {
     const endpoint =
       apiVersion === "v1" ? `/api/v1/workflows/${id}` : `/rest/workflows/${id}`;
-    return this.request("PUT", endpoint, workflow);
+
+    // Clean workflow for API - remove read-only and instance-specific fields
+    const cleanedWorkflow = this.cleanWorkflowForApi(workflow);
+    return this.request("PUT", endpoint, cleanedWorkflow);
+  }
+
+  cleanWorkflowForApi(workflow) {
+    const cleaned = JSON.parse(JSON.stringify(workflow));
+
+    // Remove read-only fields that API doesn't accept in request body
+    delete cleaned.id;
+    delete cleaned.createdAt;
+    delete cleaned.updatedAt;
+
+    // Remove meta.instanceId if present (instance-specific)
+    if (cleaned.meta?.instanceId) {
+      delete cleaned.meta.instanceId;
+      // If meta is now empty, remove it
+      if (Object.keys(cleaned.meta).length === 0) {
+        delete cleaned.meta;
+      }
+    }
+
+    // Clean nodes of any sanitization markers and invalid properties
+    if (cleaned.nodes) {
+      cleaned.nodes = cleaned.nodes.map((node) => this.cleanNodeForApi(node));
+    }
+
+    // Ensure required fields are present and in correct format
+    if (!cleaned.settings) cleaned.settings = {};
+    if (!cleaned.staticData) cleaned.staticData = null;
+    if (!cleaned.tags) cleaned.tags = [];
+    if (cleaned.pinData === undefined) cleaned.pinData = {};
+
+    // Clean any other problematic properties
+    delete cleaned.versionId; // Sometimes present from exports
+    delete cleaned.hash; // Sometimes present from exports
+
+    return cleaned;
+  }
+
+  cleanNodeForApi(node) {
+    const cleaned = { ...node };
+
+    // Remove any credential sanitization markers
+    if (cleaned.credentials) {
+      const cleanedCredentials = {};
+      for (const [type, cred] of Object.entries(cleaned.credentials)) {
+        if (cred && typeof cred === "object") {
+          // Remove sanitization markers
+          const { _preserveInstance, _type, ...cleanCred } = cred;
+          cleanedCredentials[type] = cleanCred;
+        } else {
+          cleanedCredentials[type] = cred;
+        }
+      }
+      cleaned.credentials = cleanedCredentials;
+    }
+
+    return cleaned;
   }
 
   async getWorkflowById(id, apiVersion) {
@@ -556,15 +618,20 @@ class SmartWorkflowSyncer {
     }
 
     // Apply update
-    const updated = await this.api.updateWorkflow(
-      existingWorkflow.id,
-      mergedWorkflow,
-      apiVersion
-    );
-    console.log(
-      `✅ Updated: ${repoWorkflow.name} (ID: ${existingWorkflow.id})`
-    );
-    results.updated++;
+    try {
+      const updated = await this.api.updateWorkflow(
+        existingWorkflow.id,
+        mergedWorkflow,
+        apiVersion
+      );
+      console.log(
+        `✅ Updated: ${repoWorkflow.name} (ID: ${existingWorkflow.id})`
+      );
+      results.updated++;
+    } catch (error) {
+      console.error(`   ❌ Update failed: ${error.message}`);
+      throw error;
+    }
   }
 
   async handleCreate(repoWorkflow, apiVersion, results) {
@@ -576,17 +643,20 @@ class SmartWorkflowSyncer {
       return;
     }
 
-    // Clean repository credentials for new workflow
-    const cleanWorkflow = this.merger.prepareNewNode(repoWorkflow);
+    // Create workflow (cleaning is handled by API client)
+    try {
+      const created = await this.api.createWorkflow(repoWorkflow, apiVersion);
+      const newId = created.id || created.data?.id;
 
-    const created = await this.api.createWorkflow(cleanWorkflow, apiVersion);
-    const newId = created.id || created.data?.id;
-
-    if (newId) {
-      console.log(`✅ Created: ${repoWorkflow.name} (ID: ${newId})`);
-      results.created++;
-    } else {
-      throw new Error("No ID returned from workflow creation");
+      if (newId) {
+        console.log(`✅ Created: ${repoWorkflow.name} (ID: ${newId})`);
+        results.created++;
+      } else {
+        throw new Error("No ID returned from workflow creation");
+      }
+    } catch (error) {
+      console.error(`   ❌ Creation failed: ${error.message}`);
+      throw error;
     }
   }
 
