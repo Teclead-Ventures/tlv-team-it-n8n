@@ -79,16 +79,17 @@ class N8nApiClient {
 
   async getWorkflows() {
     try {
-      const data = await this.request("GET", "/api/v1/workflows?limit=250");
-      return {
-        workflows: Array.isArray(data) ? data : data.data || [],
-        apiVersion: "v1",
-      };
-    } catch {
+      // Try REST API first as it's more stable
       const data = await this.request("GET", "/rest/workflows");
       return {
         workflows: Array.isArray(data) ? data : data.data || [],
         apiVersion: "rest",
+      };
+    } catch {
+      const data = await this.request("GET", "/api/v1/workflows?limit=250");
+      return {
+        workflows: Array.isArray(data) ? data : data.data || [],
+        apiVersion: "v1",
       };
     }
   }
@@ -108,23 +109,44 @@ class N8nApiClient {
 
     // Clean workflow for API - remove read-only and instance-specific fields
     const cleanedWorkflow = this.cleanWorkflowForApi(workflow);
+
+    // Debug: Log properties being sent to API
+    console.log(
+      `   🔧 Sending properties: ${Object.keys(cleanedWorkflow).join(", ")}`
+    );
+    console.log(
+      `   📝 First node properties: ${
+        cleanedWorkflow.nodes?.[0]
+          ? Object.keys(cleanedWorkflow.nodes[0]).join(", ")
+          : "no nodes"
+      }`
+    );
+
     return this.request("PUT", endpoint, cleanedWorkflow);
   }
 
   cleanWorkflowForApi(workflow) {
-    const cleaned = JSON.parse(JSON.stringify(workflow));
+    // Build clean workflow with only allowed properties
+    const cleaned = {
+      name: workflow.name,
+      active: workflow.active || false,
+      nodes: workflow.nodes || [],
+      connections: workflow.connections || {},
+      settings: workflow.settings || {},
+      staticData: workflow.staticData || null,
+      tags: workflow.tags || [],
+      pinData: workflow.pinData || {},
+    };
 
-    // Remove read-only fields that API doesn't accept in request body
-    delete cleaned.id;
-    delete cleaned.createdAt;
-    delete cleaned.updatedAt;
+    // Handle meta object - remove instanceId and other instance-specific meta
+    if (workflow.meta) {
+      const cleanedMeta = { ...workflow.meta };
+      delete cleanedMeta.instanceId;
+      delete cleanedMeta.templateCredsSetupCompleted; // Instance-specific
 
-    // Remove meta.instanceId if present (instance-specific)
-    if (cleaned.meta?.instanceId) {
-      delete cleaned.meta.instanceId;
-      // If meta is now empty, remove it
-      if (Object.keys(cleaned.meta).length === 0) {
-        delete cleaned.meta;
+      // Only include meta if it has remaining properties
+      if (Object.keys(cleanedMeta).length > 0) {
+        cleaned.meta = cleanedMeta;
       }
     }
 
@@ -133,28 +155,25 @@ class N8nApiClient {
       cleaned.nodes = cleaned.nodes.map((node) => this.cleanNodeForApi(node));
     }
 
-    // Ensure required fields are present and in correct format
-    if (!cleaned.settings) cleaned.settings = {};
-    if (!cleaned.staticData) cleaned.staticData = null;
-    if (!cleaned.tags) cleaned.tags = [];
-    if (cleaned.pinData === undefined) cleaned.pinData = {};
-
-    // Clean any other problematic properties
-    delete cleaned.versionId; // Sometimes present from exports
-    delete cleaned.hash; // Sometimes present from exports
-
     return cleaned;
   }
 
   cleanNodeForApi(node) {
-    const cleaned = { ...node };
+    // Build clean node with only allowed properties
+    const cleaned = {
+      name: node.name,
+      type: node.type,
+      typeVersion: node.typeVersion,
+      position: node.position,
+      parameters: node.parameters || {},
+    };
 
-    // Remove any credential sanitization markers
-    if (cleaned.credentials) {
+    // Include credentials if present, cleaned of sanitization markers
+    if (node.credentials) {
       const cleanedCredentials = {};
-      for (const [type, cred] of Object.entries(cleaned.credentials)) {
+      for (const [type, cred] of Object.entries(node.credentials)) {
         if (cred && typeof cred === "object") {
-          // Remove sanitization markers
+          // Remove sanitization markers, keep only valid credential properties
           const { _preserveInstance, _type, ...cleanCred } = cred;
           cleanedCredentials[type] = cleanCred;
         } else {
@@ -163,6 +182,21 @@ class N8nApiClient {
       }
       cleaned.credentials = cleanedCredentials;
     }
+
+    // Include other valid node properties if they exist
+    if (node.id) cleaned.id = node.id;
+    if (node.webhookId) cleaned.webhookId = node.webhookId;
+    if (node.continueOnFail !== undefined)
+      cleaned.continueOnFail = node.continueOnFail;
+    if (node.alwaysOutputData !== undefined)
+      cleaned.alwaysOutputData = node.alwaysOutputData;
+    if (node.executeOnce !== undefined) cleaned.executeOnce = node.executeOnce;
+    if (node.retryOnFail !== undefined) cleaned.retryOnFail = node.retryOnFail;
+    if (node.maxTries !== undefined) cleaned.maxTries = node.maxTries;
+    if (node.waitBetween !== undefined) cleaned.waitBetween = node.waitBetween;
+    if (node.notes !== undefined) cleaned.notes = node.notes;
+    if (node.notesInFlow !== undefined) cleaned.notesInFlow = node.notesInFlow;
+    if (node.color !== undefined) cleaned.color = node.color;
 
     return cleaned;
   }
