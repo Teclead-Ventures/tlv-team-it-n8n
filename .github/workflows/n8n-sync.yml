@@ -10,31 +10,18 @@ on:
   workflow_dispatch: {}
 
 jobs:
-  pull-via-source-control:
+  sync-workflows:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Source Control pull
-        id: sc_pull
-        run: |
-          set -euo pipefail
-          curl --fail --show-error --silent --location \
-            "${{ secrets.N8N_BASE_URL }}/api/v1/source-control/pull" \
-            --header 'Content-Type: application/json' \
-            --header "X-N8N-API-KEY: ${{ secrets.N8N_API_KEY }}" \
-            --data '{"force": true}'
-
-      - name: Checkout (for fallback)
-        if: failure()
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node (fallback)
-        if: failure()
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
 
-      - name: Fallback Public API import
-        if: failure()
+      - name: Sync workflows via Public API
         run: |
           node scripts/sync-workflows.mjs
         env:
