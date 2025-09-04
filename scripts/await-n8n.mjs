@@ -2,12 +2,15 @@
   Waits until /healthz/readiness responds with HTTP 200.
   Env:
     - N8N_BASE_URL (default: http://localhost:5678)
-    - TIMEOUT_SECONDS (default: 180)
+    - TIMEOUT_MS (default: 180000)  // prefers milliseconds
+      (fallback: TIMEOUT_SECONDS, deprecated)
     - INTERVAL_MS (default: 2000)
 */
 
 const baseUrl = process.env.N8N_BASE_URL || "http://localhost:5678";
-const timeoutSeconds = Number(process.env.TIMEOUT_SECONDS || 180);
+const timeoutMs = Number(
+  process.env.TIMEOUT_MS || Number(process.env.TIMEOUT_SECONDS || 180) * 1000
+);
 const intervalMs = Number(process.env.INTERVAL_MS || 2000);
 
 const target = new URL("/healthz/readiness", baseUrl).toString();
@@ -25,7 +28,7 @@ async function once() {
   return false;
 }
 
-const deadline = start + timeoutSeconds * 1000;
+const deadline = start + timeoutMs;
 while (Date.now() < deadline) {
   const ready = await once();
   if (ready) {
