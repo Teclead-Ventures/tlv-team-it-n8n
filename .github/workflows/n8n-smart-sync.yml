@@ -41,7 +41,14 @@ jobs:
 
       - name: Validate JSON syntax
         run: |
-          find workflows -name "*.json" -exec node -c "JSON.parse(require('fs').readFileSync('{}', 'utf8'))" \;
+          echo "🔍 Validating JSON syntax of workflow files..."
+          for file in $(find workflows -name "*.json"); do
+            echo "Checking: $file"
+            if ! node -e "JSON.parse(require('fs').readFileSync('$file', 'utf8')); console.log('✅ Valid: $file')"; then
+              echo "❌ Invalid JSON in: $file"
+              exit 1
+            fi
+          done
           echo "✅ All workflow files have valid JSON syntax"
 
   smart-sync:

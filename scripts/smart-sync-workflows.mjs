@@ -442,9 +442,22 @@ class SmartWorkflowSyncer {
         const workflow = JSON.parse(content);
 
         // Basic validation
-        if (!workflow.name || !workflow.nodes) {
-          console.warn(`⚠️  Skipping invalid workflow file: ${filePath}`);
+        if (!workflow.nodes) {
+          console.warn(
+            `⚠️  Skipping invalid workflow file: ${filePath} - missing nodes array`
+          );
           continue;
+        }
+
+        // Extract workflow name from filename if not present in JSON
+        if (!workflow.name) {
+          const fileName = path.basename(filePath, ".json");
+          workflow.name = fileName
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (l) => l.toUpperCase());
+          console.log(
+            `📝 Adding workflow name from filename: ${workflow.name}`
+          );
         }
 
         workflows.push({
