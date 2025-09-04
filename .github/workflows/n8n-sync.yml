@@ -2,11 +2,11 @@ name: n8n Sync
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
     paths:
-      - 'workflows/**'
-      - '.github/workflows/n8n-sync.yml'
-      - 'scripts/**'
+      - "workflows/**"
+      - ".github/workflows/n8n-sync.yml"
+      - "scripts/**"
   workflow_dispatch: {}
 
 jobs:
@@ -31,13 +31,12 @@ jobs:
         if: failure()
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
-      - name: Fallback: Public API import
+      - name: Fallback Public API import
         if: failure()
         run: |
           node scripts/sync-workflows.mjs
         env:
           N8N_BASE_URL: ${{ secrets.N8N_BASE_URL }}
           N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
-
