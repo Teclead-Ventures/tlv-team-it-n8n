@@ -33,10 +33,10 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Fallback: Public API import & activate
+      - name: Fallback: Public API import
         if: failure()
         run: |
-          node scripts/sync-workflows.mjs --activate
+          node scripts/sync-workflows.mjs
         env:
           N8N_BASE_URL: ${{ secrets.N8N_BASE_URL }}
           N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
