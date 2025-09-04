@@ -22,7 +22,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [-80, 1040],
-      "name": "No Operation, do nothing 43534543",
+      "name": "No Operation, do nothing",
       "id": "bd48b288-27bf-4a75-a2b6-b945e2251f4a"
     },
     {
@@ -578,7 +578,7 @@
       "typeVersion": 3.4,
       "position": [352, 48],
       "id": "deaa7049-7f96-4c4a-b01b-fc0fbed99413",
-      "name": "THIS IS A TEST NODE 2387462387462873465726"
+      "name": "THIS IS A TEST NODE 6969696969696696969"
     }
   ],
   "connections": {

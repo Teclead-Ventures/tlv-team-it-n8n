@@ -124,7 +124,7 @@ Reference: n8n Source Control Pull API `POST /api/v1/source-control/pull` and ex
 
 ### Fallback sync method: Public API import
 
-For instances without Source Control enabled, a Node script (`scripts/smart-sync-workflows.mjs`) intelligently syncs `workflows/**/*.json` via the n8n Public API, preserving instance-specific data. You can:
+For instances without Source Control enabled, a Node script (`scripts/sync-workflows.mjs`) reads `workflows/**/*.json`, upserts them via the n8n Public API, and optionally activates them. You can:
 
 - Run it locally after startup (Compose includes an optional `deployer` service for one-click).
 - Run it in CI (GitHub Action step) using `N8N_BASE_URL` and `N8N_API_KEY` secrets.
@@ -134,8 +134,8 @@ For instances without Source Control enabled, a Node script (`scripts/smart-sync
 - `deploy/docker-compose.yml`: Production-leaning local stack (n8n + optional importer) with persistent volume.
 - `deploy/.env.example`: Copy to `deploy/.env` and fill instance-specific values (timezone, API key, etc.).
 - `scripts/await-n8n.mjs`: Waits for n8n readiness using the Public API.
-- `scripts/smart-sync-workflows.mjs`: Intelligently syncs workflows via Public API while preserving instance data.
-- `.github/workflows/n8n-smart-sync.yml`: Intelligent workflow synchronization via API.
+- `scripts/sync-workflows.mjs`: Upserts and optionally activates workflows via Public API.
+- `.github/workflows/n8n-sync.yml`: Triggers Source Control pull via API.
 - `helm/values.n8n.yaml`: Example values for the 8gears Helm chart.
 - `aws/ecs-taskdef.json`: ECS Fargate task definition skeleton.
 - `deploy/credentials-overwrite.example.json`: Shows how to provision client IDs/secrets via overwrite file.
@@ -157,7 +157,7 @@ For instances without Source Control enabled, a Node script (`scripts/smart-sync
   Add `INSTANCE_URL` (like `https://n8n.example.com/api/v1`) and `INSTANCE_API_KEY` as GitHub repo secrets. On push, the action triggers `source-control/pull`.
 
 - CI (API Import fallback):  
-  Add `N8N_BASE_URL` (like `https://n8n.example.com`) and `N8N_API_KEY` as secrets. Add a step to run `node scripts/smart-sync-workflows.mjs`.
+  Add `N8N_BASE_URL` (like `https://n8n.example.com`) and `N8N_API_KEY` as secrets. Add a step to run `node scripts/sync-workflows.mjs --activate`.
 
 ### Security & credentials
 
